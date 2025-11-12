@@ -1,2 +1,2 @@
-# hopital_management
-sysetme pour la gestion d'hpital 
+# Hopital_management
+système pour la gestion d'hôpital 
