@@ -107,10 +107,41 @@ class PatientController extends Controller
     /**
      * Update the specified resource in storage.
      */
+    // 
     public function update(Request $request, Patient $patient)
-    {
-        //
+{
+    //validation des donnees
+    $data = $request->validate([
+        'CIN' => 'sometimes|string|unique:users,CIN,' . $patient->CIN . ',CIN',
+        'nom' => 'sometimes|string',
+        'prenom' => 'sometimes|string',
+        'date_naissance' => 'sometimes|date',
+        'email' => 'sometimes|email|unique:users,email,' . $patient->CIN . ',CIN',
+        'password' => 'sometimes|string|min:6',
+        'adresse' => 'nullable|string',
+        'num_tel' => 'nullable|string',
+        'gender' => 'sometimes|in:M,F',
+        'poids' => 'sometimes|numeric',
+        'height' => 'sometimes|numeric',
+        'id_rec' => 'sometimes|exists:receptionnistes,id_rec'
+    ]);
+
+    try {
+        // mettre a jour l'utilisateur
+        if ($patient->user) {
+            $patient->user->update($data); // pas de hash ici
+        }
+
+        // mettre a jour patient
+        $patient->update($data);
+
+        return response()->json(['message' => 'Patient updated successfully']);
+
+    } catch (\Exception $e) {
+        return response()->json(['error' => $e->getMessage()], 500);
     }
+}
+
 
     /**
      * Remove the specified resource from storage.

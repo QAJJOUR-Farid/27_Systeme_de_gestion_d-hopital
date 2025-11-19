@@ -45,7 +45,7 @@ class MedecinsController extends Controller
             'num_tel' => 'nullable|string',
             'annee_travail' => 'required|digits:4|integer|min:2000|max:' . date('Y'),
             'description' => 'nullable|string',
-            'specialite' => 'required|string',
+            'specialite' => 'required|string'
         ]);
 
         try{
@@ -100,9 +100,34 @@ class MedecinsController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Medecins $medecins)
+    public function update(Request $request, Medecins $medecin)
     {
-        //
+        //validation des donnees
+        $data = $request->validate([
+            'CIN' => 'sometimes|string|unique:users',
+            'nom' => 'sometimes|string',
+            'prenom' => 'sometimes|string',
+            'date_naissance' => 'sometimes|date',
+            'email' => 'sometimes|email|unique:users',
+            'password' => 'sometimes|string|min:6',
+            'adresse' => 'nullable|string',
+            'num_tel' => 'nullable|string',
+            'annee_travail' => 'sometimes|digits:4|integer|min:2000|max:' . date('Y'),
+            'description' => 'nullable|string',
+            'specialite' => 'sometimes|string'
+    ]);
+
+    try {// mettre a jour l'utilisateur
+        if ($medecin->user) {
+
+            // mettre a jour medecin
+            $medecin->user->update($data);
+        }
+
+        return response()->json(['message' => 'Medecin updated successfully']);
+    } catch (\Exception $e) {
+        return response()->json(['error' => $e->getMessage()], 500);
+    }
     }
 
     /**

@@ -96,9 +96,35 @@ class InfirmiersController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Infirmiers $infermiers)
+    public function update(Request $request, Infirmiers $infirmier)
     {
-        //
+        // validation des nouvelles donnees
+        $data = $request ->validate([
+            'nom'=>'sometimes|string',
+            'prenom'=>'sometimes|string',
+            'date_naissance'=>'sometimes|date',
+            'email' => 'sometimes|email|unique:users',
+            'password'=>'sometimes|string|min:6',
+            'adresse'=>'sometimes|string|nullable',
+            'num_tel'=>'sometimes|string|nullable',
+            'service'=>'sometimes|string'
+           
+    ]);
+
+    try {
+            // mettre a jour l'utilisateur
+        if ($infirmier->user) {
+
+            // mettre a jour infirmier
+            $infirmier->user->update($data);
+        }
+
+        return response()->json(['message' => 'infirmier updated successfully']);
+    } catch (\Exception $e) {
+        return response()->json(['error' => $e->getMessage()], 500);
+    }
+    
+        
     }
 
     /**

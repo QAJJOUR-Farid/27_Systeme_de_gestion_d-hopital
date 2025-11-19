@@ -94,10 +94,36 @@ class ReceptionnistesController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, receptionnistes $receptionnistes)
-    {
-        //
+    
+    
+public function update(Request $request, Receptionnistes $receptionniste)
+{
+    //validation des donnees
+    $data = $request->validate([
+        'nom' => 'sometimes|string',
+        'num_tel' => 'sometimes|string|nullable',
+        'CIN' => 'sometimes|string|unique:users',
+        'prenom' => 'sometimes|string',
+        'date_naissance' => 'sometimes|date',
+        'email' => 'sometimes|email|unique:users',
+        'password' => 'sometimes|string|min:6',
+        'adresse' => 'nullable|string'
+    ]);
+
+    try {// mettre a jour l'utilisateur
+        if ($receptionniste->user) {
+
+            // mettre a jour receptionniste
+            $receptionniste->user->update($data);
+        }
+
+        return response()->json(['message' => 'Receptionniste updated successfully']);
+    } catch (\Exception $e) {
+        return response()->json(['error' => $e->getMessage()], 500);
     }
+}
+
+
 
     /**
      * Remove the specified resource from storage.

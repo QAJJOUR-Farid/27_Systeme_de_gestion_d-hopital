@@ -42,7 +42,7 @@ class AdminController extends Controller
             'email' => 'required|email|unique:users',
             'password' => 'required|string|min:6',
             'adresse' => 'nullable|string',
-            'num_tel' => 'nullable|string',
+            'num_tel' => 'nullable|string'
         ]);
 
         try{
@@ -57,14 +57,14 @@ class AdminController extends Controller
                 'password' => Hash::make($data['password']),
                 'adresse' => $data['adresse'] ?? null,
                 'num_tel' => $data['num_tel'] ?? null,
-                'etat' => 'actif',
+                'etat' => 'actif'
             ]);
 
             // Create Admin linked to this user via CIN
             Admin::create([
                 'CIN' => $data['CIN']
             ]);
-        });
+        });    
 
         return response()->json([
             'message' => 'Admin created successfully']);
@@ -94,13 +94,42 @@ class AdminController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Admin $admin)
-    {
-        $appointment = Admin::findOrFail($admin->id());
+   public function update(Request $request, Admin $admin)
+{
+    //validation des donnees
+    $data = $request->validate([
+        'CIN' => 'sometimes|string|unique:users,CIN,' . $admin->CIN . ',CIN',
+        'nom' => 'sometimes|string',
+        'prenom' => 'sometimes|string',
+        'date_naissance' => 'sometimes|date',
+        'email' => 'sometimes|email|unique:users,email,' . $admin->CIN . ',CIN',
+        'password' => 'sometimes|string|min:6',
+        'adresse' => 'nullable|string',
+        'num_tel' => 'nullable|string'
+    ]);
+
+    try {
+        // mettre a jour l'utilisateur
+        if ($admin->user) {
+            $admin->user->update($data); // pas de hash
+        }
+
+        // mettre a jour l'utilisateur
+        $admin->update([]);
+
+        return response()->json(['message' => 'Admin updated successfully']);
+
+    } catch (\Exception $e) {
+        return response()->json(['error' => $e->getMessage()], 500);
+    }
+
+    //code appointment !!!!?
+    $appointment = Admin::findOrFail($admin->id());
         $appointment->update($request->all());
         return response()->json($appointment);
-        //
-    }
+}
+
+    
 
     /**
      * Remove the specified resource from storage.
