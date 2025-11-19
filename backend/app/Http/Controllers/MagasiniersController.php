@@ -26,7 +26,7 @@ class MagasiniersController extends Controller
             'email' => 'required|email|unique:users',
             'password' => 'required|string|min:6',
             'adresse' => 'nullable|string',
-            'num_tel' => 'nullable|string',
+            'num_tel' => 'nullable|string'
         ]);
 
         try{
@@ -58,5 +58,34 @@ class MagasiniersController extends Controller
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
+
+        public function update(Request $request, Magasiniers $magasinier)
+    {
+        //validation des donnees
+        $data = $request->validate([
+              'CIN' => 'sometimes|string|unique:users',
+            'nom' => 'sometimes|string',
+            'prenom' => 'sometimes|string',
+            'date_naissance' => 'sometimes|date',
+            'email' => 'sometimes|email|unique:users',
+            'password' => 'sometimes|string|min:6',
+            'adresse' => 'nullable|string',
+            'num_tel' => 'nullable|string'
+    ]);
+
+    try {
+        // mettre a jour l'utilisateur
+        if ($magasinier->user) {
+            
+            // mettre a jour magasinier
+            $magasinier->user->update($data);
+        }
+
+        return response()->json(['message' => 'magasinier updated successfully']);
+    } catch (\Exception $e) {
+        return response()->json(['error' => $e->getMessage()], 500);
+    }
+    }
+
 
 }

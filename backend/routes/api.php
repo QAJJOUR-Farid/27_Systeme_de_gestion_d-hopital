@@ -28,3 +28,12 @@ Route::delete('/produit/{produit}/destroy', [ProduitController::class, 'destroy'
 Route::get('/produit/{produit}/show',[ProduitController::class,'show'])->where('produit','[0-9]+');
 // return all the products
 Route::get('/produit/index', [ProduitController::class, 'index']);
+
+
+Route::put('/receptionnistes/{receptionniste}', [ReceptionnistesController::class,'update']);
+Route::put('/patients/{patient}', [PatientController::class, 'update']);
+ROute::put('/infirmiers/{infirmier}',[InfirmiersController::class ,'update']);
+Route::put('/medecins/{medecin}',[MedecinsController::class , 'update']);
+Route::put('/magasiniers/{magasinier}',[MagasiniersController::class , 'update']);
+Route::put('/admin/{admin}', [AdminController::class, 'update']);
+

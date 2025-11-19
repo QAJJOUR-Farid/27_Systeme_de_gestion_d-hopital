@@ -16,16 +16,16 @@ class User extends Authenticatable
     public $incrementing = false;
 
     protected $fillable = [
-        'CIN',
-        'nom',
-        'prenom',
-        'date_naissance',
-        'etat',
-        'email',
-        'password',
-        'adresse',
-        'num_tel'
-    ];
+    'CIN',
+    'nom',
+    'prenom',
+    'date_naissance',
+    'etat',
+    'email',
+    'password',
+    'adresse',
+    'num_tel'
+];
 
     protected $hidden = [
         'password',
@@ -38,10 +38,6 @@ class User extends Authenticatable
     ];
 
     // Relationships
-    public function admin()
-    {
-        return $this->hasOne(Admin::class, 'CIN', 'CIN');
-    }
 
     public function patient()
     {
