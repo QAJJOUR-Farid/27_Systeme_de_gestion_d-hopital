@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\DiagnosticController;
 use App\Http\Controllers\InfirmiersController;
 use App\Http\Controllers\MagasiniersController;
 use App\Http\Controllers\MedecinsController;
@@ -8,6 +9,11 @@ use App\Http\Controllers\PatientController;
 use App\Http\Controllers\ProduitController;
 use App\Http\Controllers\ReceptionnistesController;
 use Illuminate\Support\Facades\Route;
+
+// chnager l'etat d'utilisateur (fonction de l'admin)
+Route::patch( '/admin/{CIN}/state', [AdminController::class, 'changeState']);
+
+
 
 // store for users
 Route::post('/patients', [PatientController::class, 'store']);
@@ -20,7 +26,7 @@ Route::post('/infirmiers',[InfirmiersController::class,'store']);
 
 // store for products
 Route::post('/produit', [ProduitController::class, 'store']);
-// edit from product
+// update from product
 Route::put('/produit/{produit}/update', [ProduitController::class, 'update'])->where('produit', '[0-9]+');
 // delete from product
 Route::delete('/produit/{produit}/destroy', [ProduitController::class, 'destroy'])->where('produit', '[0-9]+');
@@ -37,3 +43,10 @@ Route::put('/medecins/{medecin}',[MedecinsController::class , 'update']);
 Route::put('/magasiniers/{magasinier}',[MagasiniersController::class , 'update']);
 Route::put('/admin/{admin}', [AdminController::class, 'update']);
 
+
+Route::post('/diagnostics', [DiagnosticController::class, 'store']);
+Route::delete('/diagnostics/{diagnostic}/destroy', [DiagnosticController::class, 'destroy']);
+Route::get('/diagnostics/{diadnostic}/show',[DiagnosticController::class,'show']);
+Route::get('/diagnostics/index', [DiagnosticController::class, 'index']);
+Route::get('/diagnostics/{id}/patient', [DiagnosticController::class, 'getDiagnosticByPatientId']);
+Route::put('/diagnostics/{diagnostic}/update', [DiagnosticController::class, 'update']);
