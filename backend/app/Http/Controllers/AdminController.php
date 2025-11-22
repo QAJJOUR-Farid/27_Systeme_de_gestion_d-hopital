@@ -12,6 +12,18 @@ use Illuminate\Support\Facades\Log;
 
 class AdminController extends Controller
 {
+
+    /*
+        changer l'etat d'un utilisateur
+    */
+
+    public function changeState($CIN){
+        $user = User::find($CIN);
+        $user->etat = $user->etat == 'actif' ? 'inactif' : 'actif';
+        $user->save();
+        return response()->json(['message' => 'User state changed successfully']);
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -64,7 +76,7 @@ class AdminController extends Controller
             Admin::create([
                 'CIN' => $data['CIN']
             ]);
-        });    
+        });
 
         return response()->json([
             'message' => 'Admin created successfully']);
@@ -129,7 +141,7 @@ class AdminController extends Controller
         return response()->json($appointment);
 }
 
-    
+
 
     /**
      * Remove the specified resource from storage.
