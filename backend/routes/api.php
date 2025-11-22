@@ -25,9 +25,16 @@ Route::post('/admin',[AdminController::class,'store']);
 Route::post('/infirmiers',[InfirmiersController::class,'store']);
 
 
-//geree Rendez-Vous
+//prende un rendez-vous 
 Route::post('/rendezVous',[RendezVousController::class,'store']);
-Route::delete('/rendezVous/{rendezVous}',[RendezVousController::class, 'destroy'])->where('produit', '[0-9]+');
+//suprimmer un Rendez-Vous
+Route::delete('/rendezVous/{rendezVous}/destroy',[RendezVousController::class, 'destroy'])->where('produit', '[0-9]+');
+//modifier un Rendez-Vous
+Route::put('/rendezVous/{rendezVous}/update', [RendezVousController::class, 'update'])->where('rendezVous', '[0-9]+');
+//get un Rendez-Vous
+Route::get('/rendezVous/{rendezVous}/show', [RendezVousController::class, 'show'])->where('rendezVous', '[0-9]+');
+//retourne tous Rendez-Vous
+Route::get('/rendezVous/index', [RendezVousController::class, 'index']);
 
 
 // store for products

@@ -15,7 +15,8 @@ class RendezVousController extends Controller
      */
     public function index()
     {
-        //
+         $rendezvous = RendezVous::all();
+         return response()->json($rendezvous, 200);
     }
 
     /**
@@ -64,7 +65,8 @@ class RendezVousController extends Controller
      */
     public function show(RendezVous $rendezVous)
     {
-        //
+        return response()->json($rendezVous);
+
     }
 
     /**
