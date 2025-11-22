@@ -7,7 +7,9 @@ use App\Http\Controllers\MedecinsController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\ProduitController;
 use App\Http\Controllers\ReceptionnistesController;
+use App\Http\Controllers\RendezVousController;
 use Illuminate\Support\Facades\Route;
+
 
 // store for users
 Route::post('/patients', [PatientController::class, 'store']);
@@ -16,6 +18,7 @@ Route::post('/medecins',[MedecinsController::class,'store']);
 Route::post('/magasiniers',[MagasiniersController::class,'store']);
 Route::post('/admin',[AdminController::class,'store']);
 Route::post('/infirmiers',[InfirmiersController::class,'store']);
+Route::post('/rendezVous',[RendezVousController::class,'store']);
 
 
 // store for products
@@ -36,4 +39,4 @@ ROute::put('/infirmiers/{infirmier}',[InfirmiersController::class ,'update']);
 Route::put('/medecins/{medecin}',[MedecinsController::class , 'update']);
 Route::put('/magasiniers/{magasinier}',[MagasiniersController::class , 'update']);
 Route::put('/admin/{admin}', [AdminController::class, 'update']);
-
+Route::put('/rendezVous/{rendezVous}', [RendezVousController::class, 'update']);

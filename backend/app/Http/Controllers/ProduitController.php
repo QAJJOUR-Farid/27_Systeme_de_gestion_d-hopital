@@ -82,10 +82,11 @@ class ProduitController extends Controller
     public function update(Request $request, Produit $produit)
     {
         $data = $request->validate([
-            'nom' => 'required|string',
-            'nombre' => 'required|numeric',
-            'prix_unitaire' => 'required|numeric',
-            'categorie' => 'required|in:materiel,medicament',
+            //on utilise sometimes au lieu de requied pour indique une action occasionnelle
+            'nom' => 'sometimes|string',
+            'nombre' => 'sometimes|numeric',
+            'prix_unitaire' => 'sometimes|numeric',
+            'categorie' => 'sometimes|in:materiel,medicament',
             'id_magasinier' => 'nullable|exists:magasiniers,id_magasinier'
         ]);
 

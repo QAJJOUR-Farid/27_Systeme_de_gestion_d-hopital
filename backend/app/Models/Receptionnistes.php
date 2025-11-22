@@ -6,10 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Receptionnistes extends Model
 {
+    protected $primaryKey = 'id_rec';
     protected $fillable = [
         'CIN'
     ];
-    protected $primaryKey = 'id_rec';
+    
 
     public function user()
     {
