@@ -9,6 +9,7 @@ use App\Http\Controllers\PatientController;
 use App\Http\Controllers\ProduitController;
 use App\Http\Controllers\ReceptionnistesController;
 use App\Http\Controllers\RendezVousController;
+use App\Http\Controllers\SignalIncidentController;
 use Illuminate\Support\Facades\Route;
 
 // chnager l'etat d'utilisateur (fonction de l'admin)
@@ -63,3 +64,14 @@ Route::get('/diagnostics/{diadnostic}/show',[DiagnosticController::class,'show']
 Route::get('/diagnostics/index', [DiagnosticController::class, 'index']);
 Route::get('/diagnostics/{id}/patient', [DiagnosticController::class, 'getDiagnosticByPatientId']);
 Route::put('/diagnostics/{diagnostic}/update', [DiagnosticController::class, 'update']);
+
+//signaler un repture 
+Route::post('/signalIncident',[SignalIncidentController::class,'store']);
+//suprimmer un signal /rupture
+Route::delete('/signalIncident/{signalIncident}/destroy',[SignalIncidentController::class, 'destroy'])->where('signal_incidents', '[0-9]+');
+//modifier un signal_incidents
+Route::put('/signalIncident/{signalIncident}/update', [SignalIncidentController::class, 'update'])->where('signal_incidents', '[0-9]+');
+//get un signal_incidents
+Route::get('/signalIncident/{signalIncident}/show', [SignalIncidentController::class, 'show'])->where('signal_incidents', '[0-9]+');
+//retourne tous signal_incidents
+Route::get('/signalIncident/index', [SignalIncidentController::class, 'index']);
