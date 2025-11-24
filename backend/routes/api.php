@@ -3,10 +3,12 @@
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\DiagnosticController;
 use App\Http\Controllers\InfirmiersController;
+use App\Http\Controllers\LivraisonController;
 use App\Http\Controllers\MagasiniersController;
 use App\Http\Controllers\MedecinsController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\ProduitController;
+use App\Http\Controllers\ProduitLivraisonController;
 use App\Http\Controllers\ReceptionnistesController;
 use Illuminate\Support\Facades\Route;
 
@@ -50,3 +52,23 @@ Route::get('/diagnostics/{diadnostic}/show',[DiagnosticController::class,'show']
 Route::get('/diagnostics/index', [DiagnosticController::class, 'index']);
 Route::get('/diagnostics/{id}/patient', [DiagnosticController::class, 'getDiagnosticByPatientId']);
 Route::put('/diagnostics/{diagnostic}/update', [DiagnosticController::class, 'update']);
+Route::patch('/medecins/{idM}/{idD}',[MedecinsController::class, 'changeState']); // testé cette fonction
+
+
+
+
+// Livraison
+Route::post('/livraison', [LivraisonController::class, 'store']);
+Route::get('/livraison/{livraison}', [LivraisonController::class, 'show'])->where('livraison', '[0-9]+');
+Route::get('/livraison/index', [LivraisonController::class, 'index']);
+Route::put('/livraison/update/{livraison}', [LivraisonController::class, 'update'])->where('livraison', '[0-9]+');
+Route::delete('/livraison/delete/{livraison}', [LivraisonController::class, 'destroy'])->where('livraison', '[0-9]+');
+
+
+// livraison - produit
+Route::post('/livraison-produit', [ProduitLivraisonController::class, 'store']);
+Route::get('/livraison-produit/index', [ProduitLivraisonController::class, 'index']);
+
+Route::get('/livraison-produit/{livraison}', [ProduitLivraisonController::class, 'showLivraison'])->where('livraison', '[0-9]+');
+Route::put('/livraison-produit/update/{livraison}', [ProduitLivraisonController::class, 'update'])->where('livraison', '[0-9]+');
+Route::delete('/livraison-produit/delete/{livraison}', [ProduitLivraisonController::class, 'destroy'])->where('livraison', '[0-9]+');
