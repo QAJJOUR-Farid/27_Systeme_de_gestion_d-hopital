@@ -136,7 +136,7 @@ class AdminController extends Controller
     }
 
     //code appointment !!!!?
-    $appointment = Admin::findOrFail($admin->id());
+        $appointment = Admin::findOrFail($admin->id());
         $appointment->update($request->all());
         return response()->json($appointment);
 }

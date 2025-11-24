@@ -6,8 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Patient extends Model
 {
-     protected $primaryKey = 'id_patient';
-     public $incrementing = true;
+    protected $primaryKey = 'id_patient';
+    public $incrementing = true;
     protected $keyType = 'int';
     protected $fillable = [
         'CIN',

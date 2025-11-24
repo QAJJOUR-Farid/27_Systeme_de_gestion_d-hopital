@@ -8,6 +8,7 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
+     * 
      */
     public function up(): void
     {
@@ -18,8 +19,8 @@ return new class extends Migration
             $table->decimal('prix_unitaire', 5, 2);
             $table->enum('categorie', ['materiel', 'medicament']);
             $table->unsignedBigInteger('id_magasinier')->nullable();
-            $table->foreign('id_magasinier')->references('id_magasinier')->
-                    on('magasiniers')->onDelete('set null');
+            $table->foreign('id_magasinier')->references('id_magasinier')
+            ->on('magasiniers')->onDelete('set null');
             $table->timestamps();
         });
     }
