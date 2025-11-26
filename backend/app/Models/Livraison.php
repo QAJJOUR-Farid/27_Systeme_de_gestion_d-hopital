@@ -4,14 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Produit extends Model
+class Livraison extends Model
 {
-    protected $primaryKey = 'idP';
+    //
+    protected $table = 'livraisons';
     protected $fillable = [
-        'nom',
-        'nombre',
-        'prix_unitaire',
-        'categorie',
+        'dateL',
+        'fournisseur',
         'id_magasinier'
     ];
 
@@ -19,8 +18,8 @@ class Produit extends Model
     {
         return $this->belongsTo(Magasiniers::class, 'id_magasinier', 'id_magasinier');
     }
-    public function produitLivraison()
+    public function produits()
     {
-        return $this->hasMany(ProduitLivraison::class, 'idP', 'idP');
+        return $this->hasMany(ProduitLivraison::class, 'idL');
     }
 }

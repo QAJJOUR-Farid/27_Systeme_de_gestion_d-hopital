@@ -16,6 +16,7 @@ return new class extends Migration
             $table->date('dateD')->nullable();
             $table->text('description')->nullable();
             $table->text('resultats')->nullable();
+            $table->enum('etat', ['approuver', 'enAttente'])->default('enAttente');
             $table->unsignedBigInteger('id_medecin')->nullable();
             $table->unsignedBigInteger('id_patient');
             $table->unsignedBigInteger(('id_infirmier'))->nullable();

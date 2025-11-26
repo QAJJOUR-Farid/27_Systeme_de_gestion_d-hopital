@@ -13,7 +13,8 @@ class Diagnostic extends Model
         'dateD',
         'description',
         'resultats',
-        'id_patient'
+        'id_patient',
+        'etat'
         ];
 
     public function patient(){

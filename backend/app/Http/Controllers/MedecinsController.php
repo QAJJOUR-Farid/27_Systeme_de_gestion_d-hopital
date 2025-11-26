@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Diagnostic;
 use App\Models\Medecins;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -136,5 +137,14 @@ class MedecinsController extends Controller
     public function destroy(Medecins $medecins)
     {
         //
+    }
+
+    public function changeState(Medecins $idM,Diagnostic $idD) {
+        $diagnostic = Diagnostic::find($idD);
+        $medecin = Medecins::find($idM);
+        $diagnostic->etat = $diagnostic->etat == 'appouver' ? 'enAttente' : 'approuver';
+        $diagnostic->id_medecin = $medecin->id_medecin ;
+        $diagnostic->save();
+        return response()->json(['message' => 'User state changed successfully']);
     }
 }
