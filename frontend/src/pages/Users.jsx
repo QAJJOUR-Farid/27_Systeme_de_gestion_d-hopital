@@ -41,6 +41,7 @@ const Users = () => {
     }
   };
 
+
   // Changer l'état d'un utilisateur
   const handleChangeState = async (CIN) => {
     try {
@@ -52,6 +53,54 @@ const Users = () => {
       console.error('Erreur:', err);
     }
   };
+  // Fonction pour activer/désactiver un utilisateur
+const handleToggleUserState = async (CIN) => {
+  try {
+    const response = await fetch(`http://localhost:8000/api/admin/${CIN}/state`, {
+      method: 'PATCH',
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (response.ok) {
+      // Recharger la liste des utilisateurs
+      loadUsers();
+      alert('État utilisateur modifié avec succès');
+    } else {
+      alert('Erreur lors de la modification de l\'état');
+    }
+  } catch (error) {
+    console.error('Erreur:', error);
+    alert('Erreur de connexion');
+  }
+};
+
+// Dans votre tableau, ajoutez une colonne pour activer/désactiver
+{
+  users.map((user) => (
+    <tr key={user.CIN}>
+      <td>{user.CIN}</td>
+      <td>{user.nom} {user.prenom}</td>
+      <td>{user.email}</td>
+      <td>
+        <span className={`badge ${user.etat === 'actif' ? 'bg-success' : 'bg-warning'}`}>
+          {user.etat}
+        </span>
+      </td>
+      <td>
+        <Button
+          variant={user.etat === 'actif' ? 'warning' : 'success'}
+          size="sm"
+          onClick={() => handleToggleUserState(user.CIN)}
+        >
+          {user.etat === 'actif' ? 'Désactiver' : 'Activer'}
+        </Button>
+      </td>
+    </tr>
+  ))
+}
 
   if (loading) {
     return (

@@ -5,25 +5,67 @@ import { useAuth } from '../../hooks/useAuth';
 const Sidebar = () => {
   const { user } = useAuth();
 
-  const menuItems = [
-    { path: '/', icon: 'fas fa-tachometer-alt', label: 'Dashboard' },
-    { path: '/rendezvous', icon: 'fas fa-calendar-check', label: 'Rendez-vous' },
-    { path: '/produits', icon: 'fas fa-pills', label: 'Produits' },
-    { path: '/diagnostics', icon: 'fas fa-stethoscope', label: 'Diagnostics' },
-  ];
+  // Configuration des menus par rôle
+  const getMenuItems = () => {
+    const baseItems = [
+      { path: '/', icon: 'fas fa-tachometer-alt', label: 'Dashboard' }
+    ];
 
-  // Ajouter la gestion des utilisateurs seulement pour l'admin
-  if (user?.role === 'admin') {
-    menuItems.push({ 
-      path: '/users', 
-      icon: 'fas fa-users-cog', 
-      label: 'Utilisateurs' 
-    });
-  }
+    switch (user?.role) {
+      case 'admin':
+        return [
+          ...baseItems,
+          { path: '/users', icon: 'fas fa-users-cog', label: 'Utilisateurs' },
+          { path: '/rendezvous', icon: 'fas fa-calendar-check', label: 'Rendez-vous' },
+          { path: '/produits', icon: 'fas fa-pills', label: 'Produits' },
+          { path: '/diagnostics', icon: 'fas fa-stethoscope', label: 'Diagnostics' }
+        ];
+      
+      case 'medecin':
+        return [
+          ...baseItems,
+          { path: '/rendezvous', icon: 'fas fa-calendar-check', label: 'Mes Rendez-vous' },
+          { path: '/diagnostics', icon: 'fas fa-stethoscope', label: 'Diagnostics' }
+        ];
+      
+      case 'infirmier':
+        return [
+          ...baseItems,
+          { path: '/diagnostics', icon: 'fas fa-stethoscope', label: 'Soins & Diagnostics' }
+        ];
+      
+      case 'receptionniste':
+        return [
+          ...baseItems,
+          { path: '/rendezvous', icon: 'fas fa-calendar-check', label: 'Rendez-vous' }
+        ];
+      
+      case 'magasinier':
+        return [
+          ...baseItems,
+          { path: '/produits', icon: 'fas fa-pills', label: 'Gestion Stock' }
+        ];
+      
+      case 'patient':
+        return [
+          ...baseItems,
+          { path: '/rendezvous', icon: 'fas fa-calendar-check', label: 'Mes Rendez-vous' }
+        ];
+      
+      default:
+        return baseItems;
+    }
+  };
+
+  const menuItems = getMenuItems();
 
   return (
     <div className="sidebar bg-dark text-white">
       <div className="sidebar-sticky">
+        <div className="p-3 border-bottom">
+          <small className="text-muted">Connecté en tant que:</small>
+          <div className="fw-bold text-capitalize">{user?.role}</div>
+        </div>
         <Nav className="flex-column p-3">
           {menuItems.map((item, index) => (
             <Nav.Link 

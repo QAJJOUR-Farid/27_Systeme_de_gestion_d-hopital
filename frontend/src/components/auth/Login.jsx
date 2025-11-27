@@ -16,10 +16,11 @@ const Login = () => {
     setLoading(true);
     setError('');
 
+    // ✅ Password EST UTILISÉ ici
     const result = await login(email, password);
     
     if (result.success) {
-      navigate('/'); // Utiliser navigate au lieu de window.location
+      navigate('/');
     } else {
       setError(result.error);
     }
@@ -81,6 +82,12 @@ const Login = () => {
                   )}
                 </Button>
               </Form>
+
+              <div className="text-center mt-3">
+                <p className="text-muted">
+                  Pas de compte? <a href="/register" className="text-primary">Créer un compte</a>
+                </p>
+              </div>
             </Card.Body>
           </Card>
         </Col>

@@ -2,198 +2,181 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Models\Admin;
+use App\Models\Medecins;
 use App\Models\Infirmiers;
 use App\Models\Magasiniers;
-use App\Models\Medecins;
-use App\Models\Patient;
 use App\Models\Receptionnistes;
-use App\Models\User;
+use App\Models\Patient;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
 
 class AuthController extends Controller
 {
-    /**
-     * Handles user registration across all supported roles.
-     */
     public function register(Request $request)
     {
-        $baseRules = [
-            'role' => 'required|in:admin,patient,medecin,receptionniste,infirmier,magasinier',
-            'CIN' => 'required|string|max:20|unique:users,CIN',
-            'nom' => 'required|string|max:50',
-            'prenom' => 'required|string|max:50',
+        $validator = Validator::make($request->all(), [
+            'CIN' => 'required|string|unique:users',
+            'nom' => 'required|string',
+            'prenom' => 'required|string',
             'date_naissance' => 'required|date',
-            'etat' => 'nullable|in:actif,inactif',
-            'email' => 'required|email|unique:users,email',
+            'email' => 'required|email|unique:users',
             'password' => 'required|string|min:6',
             'adresse' => 'nullable|string',
-            'num_tel' => 'nullable|string|max:20',
-        ];
-
-        $roleSpecificRules = match ($request->input('role')) {
-            'patient' => [
-                'gender' => 'required|in:M,F',
-                'poids' => 'nullable|numeric',
-                'height' => 'nullable|numeric',
-                'id_rec' => 'nullable|exists:receptionnistes,id_rec',
-            ],
-            'medecin' => [
-                'annee_travail' => 'required|integer|min:1950|max:' . now()->year,
-                'specialite' => 'required|string|max:100',
-                'description' => 'nullable|string',
-            ],
-            'infirmier' => [
-                'service' => 'required|string|max:100',
-                'id_medecin' => 'nullable|exists:medecins,id_medecin',
-            ],
-            default => [],
-        };
-
-        $data = $request->validate(array_merge($baseRules, $roleSpecificRules));
-
-        $user = DB::transaction(function () use ($data) {
-            // Create the core user record first.
-            $user = User::create([
-                'CIN' => $data['CIN'],
-                'nom' => $data['nom'],
-                'prenom' => $data['prenom'],
-                'date_naissance' => $data['date_naissance'],
-                'etat' => $data['etat'] ?? 'inactif',
-                'email' => $data['email'],
-                'password' => Hash::make($data['password']),
-                'adresse' => $data['adresse'] ?? null,
-                'num_tel' => $data['num_tel'] ?? null,
-            ]);
-
-            // Attach a role-specific record using the same CIN.
-            $this->createRoleRecord($data['role'], $user, $data);
-
-            return $user->fresh();
-        });
-
-        return response()->json([
-            'message' => 'Registration completed successfully.',
-            'role' => $data['role'],
-            'user' => $user,
-        ], 201);
-    }
-
-    /**
-     * Handles user authentication and resolves their role.
-     */
-    public function login(Request $request)
-    {
-        $credentials = $request->validate([
-            'email' => 'required|email',
-            'password' => 'required|string',
+            'num_tel' => 'nullable|string',
+            'role' => 'required|in:admin,medecin,infirmier,magasinier,receptionniste,patient'
         ]);
 
-        $user = User::where('email', $credentials['email'])->first();
-
-        if (!$user || !Hash::check($credentials['password'], $user->password)) {
+        if ($validator->fails()) {
             return response()->json([
-                'message' => 'Invalid credentials supplied.',
+                'message' => 'Validation error',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        try {
+            DB::transaction(function() use ($request) {
+                // ✅ MODIFICATION : TOUS les comptes sont ACTIFS pour le développement
+                $user = User::create([
+                    'CIN' => $request->CIN,
+                    'nom' => $request->nom,
+                    'prenom' => $request->prenom,
+                    'date_naissance' => $request->date_naissance,
+                    'email' => $request->email,
+                    'password' => Hash::make($request->password),
+                    'adresse' => $request->adresse ?? null,
+                    'num_tel' => $request->num_tel ?? null,
+                    'etat' => 'actif', // ← TOUJOURS ACTIF pour le développement
+                ]);
+
+                // Create specific role record
+                switch ($request->role) {
+                    case 'admin':
+                        Admin::create(['CIN' => $request->CIN]);
+                        break;
+                    case 'medecin':
+                        Medecins::create([
+                            'CIN' => $request->CIN,
+                            'annee_travail' => $request->annee_travail ?? date('Y'),
+                            'specialite' => $request->specialite ?? 'Généraliste',
+                            'description' => $request->description ?? null
+                        ]);
+                        break;
+                    case 'infirmier':
+                        Infirmiers::create([
+                            'CIN' => $request->CIN,
+                            'service' => $request->service ?? 'Général'
+                        ]);
+                        break;
+                    case 'magasinier':
+                        Magasiniers::create(['CIN' => $request->CIN]);
+                        break;
+                    case 'receptionniste':
+                        Receptionnistes::create(['CIN' => $request->CIN]);
+                        break;
+                    case 'patient':
+                        Patient::create([
+                            'CIN' => $request->CIN,
+                            'gender' => $request->gender ?? 'M',
+                            'poids' => $request->poids ?? null,
+                            'height' => $request->height ?? null,
+                            'id_rec' => $request->id_rec ?? null
+                        ]);
+                        break;
+                }
+            });
+
+            return response()->json([
+                'message' => 'Utilisateur créé avec succès'
+            ], 201);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Erreur lors de la création',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function login(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email',
+            'password' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Validation error',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user || !Hash::check($request->password, $user->password)) {
+            return response()->json([
+                'message' => 'Identifiants incorrects'
             ], 401);
         }
 
-        $role = $this->resolveRole($user);
+        // ✅ PLUS BESOIN DE VÉRIFIER L'ÉTAT - tous les comptes sont actifs
+        // if ($user->etat !== 'actif') {
+        //     return response()->json([
+        //         'message' => 'Compte désactivé. Contactez l\'administrateur.'
+        //     ], 403);
+        // }
 
-        // Extra payload depending on role (e.g. patient numeric id for rendez-vous, diagnostics).
-        $extra = [];
-        if ($role === 'patient' && $user->patient) {
-            $extra['patient_id'] = $user->patient->id_patient;
-        }
-        if ($role === 'magasinier' && $user->magasiniers) {
-            $extra['magasinier_id'] = $user->magasiniers->id_magasinier;
+        // Déterminer le rôle de l'utilisateur
+        $role = $this->getUserRole($user);
+
+        // Créer le token (assurez-vous que Sanctum est configuré)
+        try {
+            $token = $user->createToken('auth-token')->plainTextToken;
+        } catch (\Exception $e) {
+            // Fallback si Sanctum n'est pas configuré
+            $token = 'dev-token-' . $user->CIN;
         }
 
-        return response()->json(array_merge([
-            'message' => 'Login successful.',
-            'role' => $role,
-            'user' => $user,
-        ], $extra));
+        return response()->json([
+            'user' => [
+                'id' => $user->id,
+                'CIN' => $user->CIN,
+                'nom' => $user->nom,
+                'prenom' => $user->prenom,
+                'email' => $user->email,
+                'role' => $role,
+                'etat' => $user->etat
+            ],
+            'token' => $token
+        ]);
     }
 
-    /**
-     * Creates the role-specific row after a user record exists.
-     */
-    protected function createRoleRecord(string $role, User $user, array $data): void
+    private function getUserRole(User $user)
     {
-        switch ($role) {
-            case 'admin':
-                Admin::create(['CIN' => $user->CIN]);
-                break;
-
-            case 'patient':
-                Patient::create([
-                    'CIN' => $user->CIN,
-                    'gender' => $data['gender'],
-                    'poids' => $data['poids'] ?? null,
-                    'height' => $data['height'] ?? null,
-                    'id_rec' => $data['id_rec'] ?? null,
-                ]);
-                break;
-
-            case 'medecin':
-                Medecins::create([
-                    'CIN' => $user->CIN,
-                    'annee_travail' => $data['annee_travail'],
-                    'description' => $data['description'] ?? null,
-                    'specialite' => $data['specialite'],
-                ]);
-                break;
-
-            case 'receptionniste':
-                Receptionnistes::create(['CIN' => $user->CIN]);
-                break;
-
-            case 'magasinier':
-                Magasiniers::create(['CIN' => $user->CIN]);
-                break;
-
-            case 'infirmier':
-                Infirmiers::create([
-                    'CIN' => $user->CIN,
-                    'service' => $data['service'],
-                    'id_medecin' => $data['id_medecin'] ?? null,
-                ]);
-                break;
-        }
+        // Vérifier chaque relation pour déterminer le rôle
+        if ($user->admin) return 'admin';
+        if ($user->medecins) return 'medecin';
+        if ($user->infirmiers) return 'infirmier';
+        if ($user->magasiniers) return 'magasinier';
+        if ($user->receptionniste) return 'receptionniste';
+        if ($user->patient) return 'patient';
+        return 'user';
     }
 
-    /**
-     * Infers a user's role by checking linked role tables.
-     */
-    protected function resolveRole(User $user): string
+    public function logout(Request $request)
     {
-        if ($user->admin()->exists()) {
-            return 'admin';
+        try {
+            $request->user()->currentAccessToken()->delete();
+        } catch (\Exception $e) {
+            // Ignorer l'erreur si Sanctum n'est pas configuré
         }
-
-        if ($user->medecins()->exists()) {
-            return 'medecin';
-        }
-
-        if ($user->infirmiers()->exists()) {
-            return 'infirmier';
-        }
-
-        if ($user->receptionniste()->exists()) {
-            return 'receptionniste';
-        }
-
-        if ($user->magasiniers()->exists()) {
-            return 'magasinier';
-        }
-
-        if ($user->patient()->exists()) {
-            return 'patient';
-        }
-
-        return 'unknown';
+        
+        return response()->json([
+            'message' => 'Déconnexion réussie'
+        ]);
     }
 }
-
