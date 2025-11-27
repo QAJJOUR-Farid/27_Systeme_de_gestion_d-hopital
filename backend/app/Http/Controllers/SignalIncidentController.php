@@ -45,7 +45,7 @@ class SignalIncidentController extends Controller
         $incident = SignalIncident::create($data);
 
         return response()->json([
-            'message' => 'Incident signalé avec succès',
+            'message' => 'Signal Incident signalé avec succès',
             'data'    => $incident
         ], 200);
         
@@ -89,7 +89,7 @@ class SignalIncidentController extends Controller
             });
 
             return response()->json([
-                'message' => 'Incident modifier avec succès'
+                'message' => 'signal Incident modifier avec succès'
             ]);
         }catch (Exception $e) {
             Log::error($e->getMessage());
@@ -104,7 +104,7 @@ class SignalIncidentController extends Controller
     {
          try {
             $signalIncident->delete();
-            return response()->json(['message' => 'Incident supprimé avec succès'], 200);
+            return response()->json(['message' => 'Signal Incident supprimé avec succès'], 200);
 
         } catch (Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);

@@ -12,6 +12,7 @@ use App\Http\Controllers\ProduitLivraisonController;
 use App\Http\Controllers\ReceptionnistesController;
 use App\Http\Controllers\RendezVousController;
 use App\Http\Controllers\SignalIncidentController;
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
 // chnager l'etat d'utilisateur (fonction de l'admin)
@@ -66,8 +67,7 @@ Route::get('/diagnostics/{diadnostic}/show',[DiagnosticController::class,'show']
 Route::get('/diagnostics/index', [DiagnosticController::class, 'index']);
 Route::get('/diagnostics/{id}/patient', [DiagnosticController::class, 'getDiagnosticByPatientId']);
 Route::put('/diagnostics/{diagnostic}/update', [DiagnosticController::class, 'update']);
-<<<<<<< HEAD
-Route::patch('/medecins/{idM}/{idD}',[MedecinsController::class, 'changeState']); // testé cette fonction
+// Route::patch('/medecins/{idM}/{idD}',[MedecinsController::class, 'changeState']); // testé cette fonction
 
 
 
@@ -87,16 +87,13 @@ Route::get('/livraison-produit/index', [ProduitLivraisonController::class, 'inde
 Route::get('/livraison-produit/{livraison}', [ProduitLivraisonController::class, 'showLivraison'])->where('livraison', '[0-9]+');
 Route::put('/livraison-produit/update/{livraison}', [ProduitLivraisonController::class, 'update'])->where('livraison', '[0-9]+');
 Route::delete('/livraison-produit/delete/{livraison}', [ProduitLivraisonController::class, 'destroy'])->where('livraison', '[0-9]+');
-=======
+// routes/api.php
 
-//signaler un repture 
-Route::post('/signalIncident',[SignalIncidentController::class,'store']);
-//suprimmer un signal /rupture
-Route::delete('/signalIncident/{signalIncident}/destroy',[SignalIncidentController::class, 'destroy'])->where('signal_incidents', '[0-9]+');
-//modifier un signal_incidents
-Route::put('/signalIncident/{signalIncident}/update', [SignalIncidentController::class, 'update'])->where('signal_incidents', '[0-9]+');
-//get un signal_incidents
-Route::get('/signalIncident/{signalIncident}/show', [SignalIncidentController::class, 'show'])->where('signal_incidents', '[0-9]+');
-//retourne tous signal_incidents
-Route::get('/signalIncident/index', [SignalIncidentController::class, 'index']);
->>>>>>> 93e31439b18055999814ce1b8f14a7592bd37bbc
+
+
+// Users CRUD pour admin
+Route::get('/users', [AdminController::class, 'getAllUsers']); // liste de tous les users
+Route::post('/users', [AdminController::class, 'store']);       // ajouter un user
+Route::put('/users/{CIN}', [AdminController::class, 'update']); // modifier un user
+Route::delete('/users/{CIN}', [AdminController::class, 'destroy']); // supprimer
+Route::patch('/users/{CIN}/state', [AdminController::class, 'changeState']); // activer/desactiver

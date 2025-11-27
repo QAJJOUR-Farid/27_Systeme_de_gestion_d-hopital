@@ -141,6 +141,11 @@ class AdminController extends Controller
         return response()->json($appointment);
 }
 
+public function getAllUsers() {
+    $users = User::all();
+    return response()->json($users);
+}
+
 
 
     /**
