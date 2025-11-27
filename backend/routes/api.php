@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DiagnosticController;
 use App\Http\Controllers\InfirmiersController;
 use App\Http\Controllers\LivraisonController;
@@ -14,6 +15,12 @@ use App\Http\Controllers\RendezVousController;
 use App\Http\Controllers\SignalIncidentController;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
+
+
+// Auth
+Route::post('/auth/register', [AuthController::class, 'register']);
+Route::post('/auth/login', [AuthController::class, 'login']);
+
 
 // chnager l'etat d'utilisateur (fonction de l'admin)
 Route::patch( '/admin/{CIN}/state', [AdminController::class, 'changeState']);
@@ -29,7 +36,7 @@ Route::post('/admin',[AdminController::class,'store']);
 Route::post('/infirmiers',[InfirmiersController::class,'store']);
 
 
-//prende un rendez-vous 
+//prende un rendez-vous
 Route::post('/rendezVous',[RendezVousController::class,'store']);
 //suprimmer un Rendez-Vous
 Route::delete('/rendezVous/{rendezVous}/destroy',[RendezVousController::class, 'destroy'])->where('produit', '[0-9]+');
@@ -67,7 +74,7 @@ Route::get('/diagnostics/{diadnostic}/show',[DiagnosticController::class,'show']
 Route::get('/diagnostics/index', [DiagnosticController::class, 'index']);
 Route::get('/diagnostics/{id}/patient', [DiagnosticController::class, 'getDiagnosticByPatientId']);
 Route::put('/diagnostics/{diagnostic}/update', [DiagnosticController::class, 'update']);
-// Route::patch('/medecins/{idM}/{idD}',[MedecinsController::class, 'changeState']); // testé cette fonction
+Route::patch('/medecins/{idM}/{idD}',[MedecinsController::class, 'changeState']); // testé cette fonction
 
 
 
@@ -97,3 +104,16 @@ Route::post('/users', [AdminController::class, 'store']);       // ajouter un us
 Route::put('/users/{CIN}', [AdminController::class, 'update']); // modifier un user
 Route::delete('/users/{CIN}', [AdminController::class, 'destroy']); // supprimer
 Route::patch('/users/{CIN}/state', [AdminController::class, 'changeState']); // activer/desactiver
+
+
+//signaler un repture
+Route::post('/signalIncident',[SignalIncidentController::class,'store']);
+//suprimmer un signal /rupture
+Route::delete('/signalIncident/{signalIncident}/destroy',[SignalIncidentController::class, 'destroy'])->where('signal_incidents', '[0-9]+');
+//modifier un signal_incidents
+Route::put('/signalIncident/{signalIncident}/update', [SignalIncidentController::class, 'update'])->where('signal_incidents', '[0-9]+');
+//get un signal_incidents
+Route::get('/signalIncident/{signalIncident}/show', [SignalIncidentController::class, 'show'])->where('signal_incidents', '[0-9]+');
+//retourne tous signal_incidents
+Route::get('/signalIncident/index', [SignalIncidentController::class, 'index']);
+
