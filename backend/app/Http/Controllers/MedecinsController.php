@@ -17,6 +17,7 @@ class MedecinsController extends Controller
      * Display a listing of the resource.
      */
     public function index()
+<<<<<<< HEAD
 {
     $medecins = Medecins::join('users', 'users.CIN', '=', 'medecins.CIN')
                         ->select('medecins.*', 'users.nom', 'users.prenom', 'users.email')
@@ -25,6 +26,12 @@ class MedecinsController extends Controller
     return response()->json($medecins);
 }
 
+=======
+    {
+        $medecins = Medecins::with('user')->get();
+        return response()->json($medecins, 200);
+    }
+>>>>>>> 47c75a4ddb950c6409aa7351181805d0d34e571b
 
     /**
      * Show the form for creating a new resource.
@@ -90,9 +97,16 @@ class MedecinsController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Medecins $medecins)
+    public function show(Medecins $id)
     {
         //
+        $medecin = Medecins::with('user')->find($id);
+
+        if (!$medecin) {
+            return response()->json(['error' => 'Médecin non trouvé'], 404);
+        }
+
+        return response()->json($medecin);
     }
 
     /**
@@ -110,30 +124,52 @@ class MedecinsController extends Controller
     {
         //validation des donnees
         $data = $request->validate([
-            'CIN' => 'sometimes|string|unique:users',
             'nom' => 'sometimes|string',
             'prenom' => 'sometimes|string',
             'date_naissance' => 'sometimes|date',
-            'email' => 'sometimes|email|unique:users',
+            'email' => 'sometimes|email|unique:users,email,' . $medecin->CIN . ',CIN',
             'password' => 'sometimes|string|min:6',
             'adresse' => 'nullable|string',
             'num_tel' => 'nullable|string',
             'annee_travail' => 'sometimes|digits:4|integer|min:2000|max:' . date('Y'),
             'description' => 'nullable|string',
             'specialite' => 'sometimes|string'
-    ]);
+        ]);
 
-    try {// mettre a jour l'utilisateur
-        if ($medecin->user) {
+        try {
+            // Debug logging
+            Log::info('Medecin update request', [
+                'medecin_id' => $medecin->id_medecin,
+                'request_data' => $data
+            ]);
 
-            // mettre a jour medecin
-            $medecin->user->update($data);
+            // mettre a jour l'utilisateur
+            if ($medecin->user) {
+            // Separate user data from medecin data
+            $userData = collect($data)->except(['annee_travail', 'description', 'specialite'])->toArray();
+            $medecinData = collect($data)->only(['annee_travail', 'description', 'specialite'])->toArray();
+
+                Log::info('Separated data', [
+                    'user_data' => $userData,
+                    'medecin_data' => $medecinData
+                ]);
+
+                // mettre a jour user
+                $userUpdateResult = $medecin->user->update($userData);
+                Log::info('User update result', ['result' => $userUpdateResult, 'updated_user' => $medecin->user->fresh()]);
+
+                // mettre a jour medecin
+                if (!empty($medecinData)) {
+                    $result = $medecin->update($medecinData);
+                    Log::info('Medecin update result', ['result' => $result, 'updated_medecin' => $medecin->fresh()]);
+                }
+            }
+
+            return response()->json(['message' => 'Medecin updated successfully']);
+        } catch (\Exception $e) {
+            Log::error('Medecin update error', ['error' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
+            return response()->json(['error' => $e->getMessage()], 500);
         }
-
-        return response()->json(['message' => 'Medecin updated successfully']);
-    } catch (\Exception $e) {
-        return response()->json(['error' => $e->getMessage()], 500);
-    }
     }
 
     /**
