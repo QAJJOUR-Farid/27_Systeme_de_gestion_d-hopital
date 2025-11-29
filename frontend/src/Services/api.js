@@ -22,14 +22,58 @@ api.interceptors.request.use(
     return Promise.reject(error);
   }
 );
+// Interceptor pour ajouter le token d'authentification
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('authToken');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+
 
 // Gestion des utilisateurs
 export const userAPI = {
   getAllUsers: () => api.get('/users'),
   createUser: (userData) => api.post('/users', userData),
   updateUser: (CIN, userData) => api.put(`/users/${CIN}`, userData),
-  deleteUser: (CIN) => api.delete(`/users/${CIN}`), // ← Export ajouté
+  deleteUser: (CIN) => api.delete(`/users/${CIN}`), 
   changeUserState: (CIN) => api.patch(`/users/${CIN}/state`),
+  toggleUserState: (CIN) => api.patch(`/users/${CIN}/state`),
+};
+
+// Gestion des médecins
+export const medecinAPI = {
+  getAllMedecins: () => api.get('/medecins'),
+  getOneMedecin: (CIN) => api.get(`/medecins/${CIN}`),
+  createMedecin: (data) => api.post('/medecins', data),
+  updateMedecin: (CIN, data) => api.put(`/medecins/${CIN}`, data),
+  deleteMedecin: (CIN) => api.delete(`/medecins/${CIN}`),
+};
+
+
+
+export const authAPI = {
+  login: (credentials) => api.post('/login', credentials),
+  register: (userData) => api.post('/register', userData),
+  logout: () => api.post('/logout'),
+};
+
+
+
+// Patients
+export const patientsAPI = {
+  getAllPatients: () => api.get('/patients'),
+  getPatientById: (id) => api.get(`/patients/${id}`),
+  createPatient: (data) => api.post('/patients', data),
+  updatePatient: (id, data) => api.put(`/patients/${id}`, data),
+  deletePatient: (id) => api.delete(`/patients/${id}`),
 };
 
 // Gestion des rendez-vous
@@ -76,6 +120,9 @@ export const produitLivraisonAPI = {
   deleteProduitLivraison: (id) => api.delete(`/livraison-produit/delete/${id}`),
   getProduitLivraisonByLivraisonId: (id) => api.get(`/livraison-produit/${id}`),
 };
+
+
+
 
 // Export par défaut
 export default api;

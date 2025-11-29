@@ -26,4 +26,7 @@ class RendezVous extends Model
     public function receptionniste(){
         return $this->belongsTo(Receptionnistes::class , 'id_rec','id_rec');
     }
+    // public function infirmier(){
+    //     return $this->belongsTo(Infirmiers::class , 'id_infirmier','id_infirmier');
+    // }
 }

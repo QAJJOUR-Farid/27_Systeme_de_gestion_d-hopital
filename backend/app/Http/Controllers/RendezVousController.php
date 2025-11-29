@@ -39,7 +39,7 @@ class RendezVousController extends Controller
             'id_rec'=>'required|exists:receptionnistes,id_rec',
             'date_rv'=>'required|date',
             'dateDePrisedeRV'=>'nullable|date',
-            'statut'=>'required|string|in:prévu,annulé,terminé',
+            'statut'=>'required|string|in:prévu,confirmé,terminé,annulé',
             'motif'=>'required|string' 
         ]);
         
@@ -88,7 +88,7 @@ class RendezVousController extends Controller
             'id_rec'=>'sometimes|exists:receptionnistes,id_rec',
             'date_rv'=>'sometimes|date',
             'dateDePrisedeRV'=>'sometimes|date',
-            'statut'=>'sometimes|string|in:prévu,annulé,terminé',
+            'statut'=>'sometimes|string|in:prévu,confirmé,terminé,annulé',
             'motif'=>'sometimes|string'
         ]);
 

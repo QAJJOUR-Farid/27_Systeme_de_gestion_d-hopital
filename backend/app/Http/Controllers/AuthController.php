@@ -24,10 +24,11 @@ class AuthController extends Controller
             'prenom' => 'required|string',
             'date_naissance' => 'required|date',
             'email' => 'required|email|unique:users',
+            'role' => 'required|in:admin,medecin,infirmier,receptionniste,magasinier,patient',
             'password' => 'required|string|min:6',
             'adresse' => 'nullable|string',
             'num_tel' => 'nullable|string',
-            'role' => 'required|in:admin,medecin,infirmier,magasinier,receptionniste,patient'
+            
         ]);
 
         if ($validator->fails()) {
@@ -46,10 +47,11 @@ class AuthController extends Controller
                     'prenom' => $request->prenom,
                     'date_naissance' => $request->date_naissance,
                     'email' => $request->email,
+                    'role' => $request->role,
                     'password' => Hash::make($request->password),
                     'adresse' => $request->adresse ?? null,
                     'num_tel' => $request->num_tel ?? null,
-                    'etat' => 'actif', // ← TOUJOURS ACTIF pour le développement
+                    'etat' => 'inactif', // ← TOUJOURS ACTIF pour le développement
                 ]);
 
                 // Create specific role record
@@ -123,12 +125,12 @@ class AuthController extends Controller
             ], 401);
         }
 
-        // ✅ PLUS BESOIN DE VÉRIFIER L'ÉTAT - tous les comptes sont actifs
-        // if ($user->etat !== 'actif') {
-        //     return response()->json([
-        //         'message' => 'Compte désactivé. Contactez l\'administrateur.'
-        //     ], 403);
-        // }
+        //  PLUS BESOIN DE VÉRIFIER L'ÉTAT - tous les comptes sont actifs
+        if ($user->etat !== 'actif') {
+            return response()->json([
+                'message' => 'Compte désactivé. Contactez l\'administrateur.'
+            ], 403);
+        }
 
         // Déterminer le rôle de l'utilisateur
         $role = $this->getUserRole($user);
@@ -148,7 +150,7 @@ class AuthController extends Controller
                 'nom' => $user->nom,
                 'prenom' => $user->prenom,
                 'email' => $user->email,
-                'role' => $role,
+                'role' => $user->role,
                 'etat' => $user->etat
             ],
             'token' => $token
@@ -179,4 +181,54 @@ class AuthController extends Controller
             'message' => 'Déconnexion réussie'
         ]);
     }
+public function update(Request $request, $CIN)
+{
+    // Debug: voir ce qui est reçu
+    \Log::info('Données reçues pour modification:', $request->all());
+    \Log::info('CIN de l\'utilisateur à modifier:', ['CIN' => $CIN]);
+
+    // Validation pour la modification
+    $validated = $request->validate([
+        'nom' => 'sometimes|required|string|max:255',
+        'prenom' => 'sometimes|required|string|max:255',
+        'email' => 'sometimes|required|email|unique:users,email,' . $CIN . ',CIN',
+        'role' => 'sometimes|required|in:admin,medecin,infirmier,receptionniste,magasinier,patient',
+        'password' => 'sometimes|min:6',
+    ]);
+
+    // Trouver l'utilisateur
+    $user = User::where('CIN', $CIN)->first();
+    
+    if (!$user) {
+        return response()->json(['message' => 'Utilisateur non trouvé'], 404);
+    }
+
+    // Debug: utilisateur avant modification
+    \Log::info('Utilisateur avant modification:', $user->toArray());
+
+    // Mettre à jour seulement les champs fournis
+    if ($request->has('nom')) {
+        $user->nom = $validated['nom'];
+    }
+    if ($request->has('prenom')) {
+        $user->prenom = $validated['prenom'];
+    }
+    if ($request->has('email')) {
+        $user->email = $validated['email'];
+    }
+    if ($request->has('role')) {
+        $user->role = $validated['role'];
+    }
+    if ($request->has('password') && !empty($validated['password'])) {
+        $user->password = Hash::make($validated['password']);
+    }
+
+    // Sauvegarder
+    $user->save();
+
+    // Debug: utilisateur après modification
+    \Log::info('Utilisateur après modification:', $user->toArray());
+
+    return response()->json($user);
+}
 }

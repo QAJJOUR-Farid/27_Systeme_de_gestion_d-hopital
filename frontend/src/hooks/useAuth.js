@@ -44,7 +44,7 @@ export const useAuthLogic = () => {
       if (response.ok) {
         const data = await response.json();
         
-        // Adapté à votre structure Laravel
+      
         const userData = {
           id: data.user.id,
           CIN: data.user.CIN,

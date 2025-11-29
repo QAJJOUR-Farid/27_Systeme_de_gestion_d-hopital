@@ -13,6 +13,8 @@ use App\Http\Controllers\ProduitLivraisonController;
 use App\Http\Controllers\ReceptionnistesController;
 use App\Http\Controllers\RendezVousController;
 use App\Http\Controllers\SignalIncidentController;
+use App\Http\Controllers\UserController;
+
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
@@ -27,6 +29,8 @@ Route::patch( '/admin/{CIN}/state', [AdminController::class, 'changeState']);
 
 
 
+Route::post('/users', [UserController::class, 'store']);
+Route::get('/users', [UserController::class, 'index']);
 // store for users
 Route::post('/patients', [PatientController::class, 'store']);
 Route::post('/receptionnistes',[ReceptionnistesController::class,'store']);
@@ -76,8 +80,8 @@ Route::get('/diagnostics/{id}/patient', [DiagnosticController::class, 'getDiagno
 Route::put('/diagnostics/{diagnostic}/update', [DiagnosticController::class, 'update']);
 Route::patch('/medecins/{idM}/{idD}',[MedecinsController::class, 'changeState']); // testé cette fonction
 
-
-
+Route::get('/patients', [PatientController::class, 'index']);
+Route::delete('/patients/{patient}', [PatientController::class, 'destroy']);
 
 // Livraison
 Route::post('/livraison', [LivraisonController::class, 'store']);
@@ -104,6 +108,9 @@ Route::post('/users', [AdminController::class, 'store']);       // ajouter un us
 Route::put('/users/{CIN}', [AdminController::class, 'update']); // modifier un user
 Route::delete('/users/{CIN}', [AdminController::class, 'destroy']); // supprimer
 Route::patch('/users/{CIN}/state', [AdminController::class, 'changeState']); // activer/desactiver
+
+//route pour recuoere les medecins 
+Route::get('/medecins', [MedecinsController::class, 'index']);
 
 
 //signaler un repture

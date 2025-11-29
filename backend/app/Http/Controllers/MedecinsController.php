@@ -17,9 +17,14 @@ class MedecinsController extends Controller
      * Display a listing of the resource.
      */
     public function index()
-    {
-        //
-    }
+{
+    $medecins = Medecins::join('users', 'users.CIN', '=', 'medecins.CIN')
+                        ->select('medecins.*', 'users.nom', 'users.prenom', 'users.email')
+                        ->paginate(10);
+
+    return response()->json($medecins);
+}
+
 
     /**
      * Show the form for creating a new resource.

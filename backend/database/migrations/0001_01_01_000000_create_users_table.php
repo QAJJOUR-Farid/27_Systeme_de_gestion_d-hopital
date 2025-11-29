@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('prenom', 50);
             $table->date('date_naissance');
             $table->enum('etat', ['actif', 'inactif'])->default('inactif');
+            $table->enum('role', ['admin', 'medecin', 'infirmier', 'receptionniste', 'magasinier', 'patient']);
             $table->string('email', 100)->unique();
             $table->string('password');
             $table->text('adresse')->nullable();
@@ -51,9 +52,10 @@ return new class extends Migration
         Schema::dropIfExists('users');
         Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('sessions');
+        
     }
+   
 
-
-
+ 
     
 };

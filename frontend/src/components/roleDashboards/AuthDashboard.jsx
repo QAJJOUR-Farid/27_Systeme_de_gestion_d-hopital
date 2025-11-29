@@ -2,11 +2,7 @@ import { useState } from 'react';
 import PropTypes from 'prop-types';
 import { login, register } from '/xampp/htdocs/hopital_management/frontend/src/api/authService';
 
-/**
- * Landing dashboard with Login + Register panels.
- * Handles form toggling, conditional fields based on the selected role,
- * and emits navigation commands when auth succeeds.
- */
+
 function AuthDashboard({ onAuthSuccess }) {
   const [activeTab, setActiveTab] = useState('login');
   const [feedback, setFeedback] = useState(null);

@@ -2,6 +2,7 @@ import React from 'react';
 import { Nav } from 'react-bootstrap';
 import { useAuth } from '../../hooks/useAuth';
 
+
 const Sidebar = () => {
   const { user } = useAuth();
 
@@ -16,11 +17,11 @@ const Sidebar = () => {
         return [
           ...baseItems,
           { path: '/users', icon: 'fas fa-users-cog', label: 'Utilisateurs' },
-          { path: '/rendezvous', icon: 'fas fa-calendar-check', label: 'Rendez-vous' },
-          { path: '/produits', icon: 'fas fa-pills', label: 'Produits' },
-          { path: '/diagnostics', icon: 'fas fa-stethoscope', label: 'Diagnostics' }
+          { path: '/Patients', icon: 'fas fa-user-injured', label: 'Patients' },
+          { path: '/diagnostics', icon: 'fas fa-stethoscope', label: 'Diagnostics' },
+          { path: '/produits', icon: 'fas fa-pills', label: 'Produits' }
         ];
-      
+    
       case 'medecin':
         return [
           ...baseItems,
@@ -31,7 +32,8 @@ const Sidebar = () => {
       case 'infirmier':
         return [
           ...baseItems,
-          { path: '/diagnostics', icon: 'fas fa-stethoscope', label: 'Soins & Diagnostics' }
+          { path: '/diagnostics', icon: 'fas fa-stethoscope', label: 'Soins & Diagnostics' },
+          { path: '/rendezvous-infirmier', icon: 'fas fa-calendar-check', label: 'Rendez-vous' } 
         ];
       
       case 'receptionniste':
@@ -43,7 +45,8 @@ const Sidebar = () => {
       case 'magasinier':
         return [
           ...baseItems,
-          { path: '/produits', icon: 'fas fa-pills', label: 'Gestion Stock' }
+          { path: '/produits', icon: 'fas fa-pills', label: 'Gestion Stock' },
+          
         ];
       
       case 'patient':

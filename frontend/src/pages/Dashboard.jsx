@@ -1,65 +1,245 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Card } from 'react-bootstrap';
 import { useAuth } from '../hooks/useAuth';
 
 const Dashboard = () => {
   const { user } = useAuth();
+  const [stats, setStats] = useState([]);
 
-  // Statistiques par rôle
-  const getStatsByRole = () => {
-    switch (user?.role) {
-      case 'admin':
-        return [
-          { title: 'Utilisateurs', value: '150', icon: 'fas fa-users', color: 'primary' },
-          { title: 'Rendez-vous', value: '45', icon: 'fas fa-calendar-check', color: 'success' },
-          { title: 'Produits en Stock', value: '1,234', icon: 'fas fa-pills', color: 'info' },
-          { title: 'Diagnostics', value: '89', icon: 'fas fa-stethoscope', color: 'warning' }
-        ];
-      
-      case 'medecin':
-        return [
-          { title: 'Rendez-vous Aujourd\'hui', value: '8', icon: 'fas fa-calendar-day', color: 'primary' },
-          { title: 'Patients Suivis', value: '45', icon: 'fas fa-user-injured', color: 'success' },
-          { title: 'Diagnostics Ce Mois', value: '23', icon: 'fas fa-stethoscope', color: 'info' },
-          { title: 'Urgences', value: '2', icon: 'fas fa-exclamation-triangle', color: 'warning' }
-        ];
-      
-      case 'infirmier':
-        return [
-          { title: 'Soins Aujourd\'hui', value: '12', icon: 'fas fa-hand-holding-medical', color: 'primary' },
-          { title: 'Patients à Suivre', value: '6', icon: 'fas fa-user-injured', color: 'success' },
-          { title: 'Traitements', value: '18', icon: 'fas fa-pills', color: 'info' },
-          { title: 'Alertes', value: '3', icon: 'fas fa-bell', color: 'warning' }
-        ];
-      
-      case 'receptionniste':
-        return [
-          { title: 'RDV Aujourd\'hui', value: '25', icon: 'fas fa-calendar-day', color: 'primary' },
-          { title: 'Nouveaux Patients', value: '5', icon: 'fas fa-user-plus', color: 'success' },
-          { title: 'RDV en Attente', value: '8', icon: 'fas fa-clock', color: 'info' },
-          { title: 'Appels', value: '34', icon: 'fas fa-phone', color: 'warning' }
-        ];
-      
-      case 'magasinier':
-        return [
-          { title: 'Produits en Stock', value: '1,234', icon: 'fas fa-pills', color: 'primary' },
-          { title: 'Stock Faible', value: '12', icon: 'fas fa-exclamation-triangle', color: 'warning' },
-          { title: 'Commandes en Cours', value: '5', icon: 'fas fa-truck', color: 'info' },
-          { title: 'Rupertures', value: '2', icon: 'fas fa-times-circle', color: 'danger' }
-        ];
-      
-      case 'patient':
-        return [
-          { title: 'Prochain RDV', value: 'Demain', icon: 'fas fa-calendar-check', color: 'primary' },
-          { title: 'Ordonnances', value: '3', icon: 'fas fa-prescription', color: 'success' },
-          { title: 'Diagnostics', value: '2', icon: 'fas fa-file-medical', color: 'info' },
-          { title: 'Messages', value: '1', icon: 'fas fa-envelope', color: 'warning' }
-        ];
-      
-      default:
-        return [];
+  // Fonction pour récupérer les données
+  const fetchData = async (url) => {
+    try {
+      const response = await fetch(url);
+      if (response.ok) {
+        const data = await response.json();
+        return data;
+      }
+      return null;
+    } catch (error) {
+      return null;
     }
   };
+
+  // Charger les statistiques selon le rôle
+  useEffect(() => {
+    const loadStats = async () => {
+      let statsData = [];
+
+      switch (user?.role) {
+        case 'admin':
+          const [users, patients, diagnostics, produits] = await Promise.all([
+            fetchData('http://localhost:8000/api/users'),
+            fetchData('http://localhost:8000/api/patients'),
+            fetchData('http://localhost:8000/api/diagnostics/index'),
+            fetchData('http://localhost:8000/api/produit/index')
+          ]);
+
+          statsData = [
+            { 
+              title: 'Utilisateurs', 
+              value: users?.length || '0', 
+              icon: 'fas fa-users', 
+              color: 'primary' 
+            },
+            { 
+              title: 'Patients', 
+              value: patients?.length || '0', 
+              icon: 'fas fa-user-injured', 
+              color: 'danger' 
+            },
+            { 
+              title: 'Diagnostics', 
+              value: diagnostics?.length || '0', 
+              icon: 'fas fa-stethoscope', 
+              color: 'warning' 
+            },
+            { 
+              title: 'Produits en Stock', 
+              value: produits?.length || '0', 
+              icon: 'fas fa-pills', 
+              color: 'info' 
+            }
+          ];
+          break;
+        
+        case 'medecin':
+          const [rdvMedecin, patientsMedecin] = await Promise.all([
+            fetchData('http://localhost:8000/api/rendezVous/index'),
+            fetchData('http://localhost:8000/api/patients')
+          ]);
+
+          statsData = [
+            { 
+              title: 'Rendez-vous Aujourd\'hui', 
+              value: '8', 
+              icon: 'fas fa-calendar-day', 
+              color: 'primary' 
+            },
+            { 
+              title: 'Patients Suivis', 
+              value: patientsMedecin?.length || '45', 
+              icon: 'fas fa-user-injured', 
+              color: 'success' 
+            },
+            { 
+              title: 'Diagnostics Ce Mois', 
+              value: '23', 
+              icon: 'fas fa-stethoscope', 
+              color: 'info' 
+            },
+            { 
+              title: 'Urgences', 
+              value: '2', 
+              icon: 'fas fa-exclamation-triangle', 
+              color: 'warning' 
+            }
+          ];
+          break;
+        
+        case 'infirmier':
+          const [diagnosticsInfirmier] = await Promise.all([
+            fetchData('http://localhost:8000/api/diagnostics/index'),
+            fetchData('http://localhost:8000/api/rendezVous/index')
+          ]);
+
+          statsData = [
+            { 
+              title: 'Soins Aujourd\'hui', 
+              value: '9', 
+              icon: 'fas fa-hand-holding-medical', 
+              color: 'primary' 
+            },
+            { 
+              title: 'Patients à Suivre', 
+              value: '5', 
+              icon: 'fas fa-user-injured', 
+              color: 'success' 
+            },
+            { 
+              title: 'Traitements', 
+              value: diagnosticsInfirmier?.length || '13', 
+              icon: 'fas fa-pills', 
+              color: 'info' 
+            },
+            { 
+              title: 'Alertes', 
+              value: '7', 
+              icon: 'fas fa-bell', 
+              color: 'warning' 
+            }
+          ];
+          break;
+        
+        case 'receptionniste':
+          const [rdvReception, patientsReception] = await Promise.all([
+            fetchData('http://localhost:8000/api/rendezVous/index'),
+            fetchData('http://localhost:8000/api/patients')
+          ]);
+
+          statsData = [
+            { 
+              title: 'RDV Aujourd\'hui', 
+              value: rdvReception?.length || '25', 
+              icon: 'fas fa-calendar-day', 
+              color: 'primary' 
+            },
+            { 
+              title: 'Nouveaux Patients', 
+              value: '5', 
+              icon: 'fas fa-user-plus', 
+              color: 'success' 
+            },
+            { 
+              title: 'RDV en Attente', 
+              value: '8', 
+              icon: 'fas fa-clock', 
+              color: 'info' 
+            },
+            { 
+              title: 'Appels', 
+              value: '34', 
+              icon: 'fas fa-phone', 
+              color: 'warning' 
+            }
+          ];
+          break;
+        
+        case 'magasinier':
+          const [produitsStock, signalements] = await Promise.all([
+            fetchData('http://localhost:8000/api/produit/index'),
+            fetchData('http://localhost:8000/api/signalIncident/index')
+          ]);
+
+          statsData = [
+            { 
+              title: 'Produits en Stock', 
+              value: produitsStock?.length || '1,234', 
+              icon: 'fas fa-pills', 
+              color: 'primary' 
+            },
+            { 
+              title: 'Stock Faible', 
+              value: '12', 
+              icon: 'fas fa-exclamation-triangle', 
+              color: 'warning' 
+            },
+            { 
+              title: 'Commandes en Cours', 
+              value: '5', 
+              icon: 'fas fa-truck', 
+              color: 'info' 
+            },
+            { 
+              title: 'Ruptures', 
+              value: signalements?.filter(s => s.type === 'rupture')?.length || '2', 
+              icon: 'fas fa-times-circle', 
+              color: 'danger' 
+            }
+          ];
+          break;
+        
+        case 'patient':
+          const [diagnosticsPatient] = await Promise.all([
+            fetchData(`http://localhost:8000/api/diagnostics/${user.id}/patient`)
+          ]);
+
+          statsData = [
+            { 
+              title: 'Prochain RDV', 
+              value: 'Demain', 
+              icon: 'fas fa-calendar-check', 
+              color: 'primary' 
+            },
+            { 
+              title: 'Ordonnances', 
+              value: '3', 
+              icon: 'fas fa-prescription', 
+              color: 'success' 
+            },
+            { 
+              title: 'Diagnostics', 
+              value: diagnosticsPatient?.length || '2', 
+              icon: 'fas fa-file-medical', 
+              color: 'info' 
+            },
+            { 
+              title: 'Messages', 
+              value: '1', 
+              icon: 'fas fa-envelope', 
+              color: 'warning' 
+            }
+          ];
+          break;
+        
+        default:
+          statsData = [];
+      }
+
+      setStats(statsData);
+    };
+
+    loadStats();
+  }, [user]);
 
   const getWelcomeMessage = () => {
     switch (user?.role) {
@@ -72,8 +252,6 @@ const Dashboard = () => {
       default: return 'Tableau de Bord';
     }
   };
-
-  const stats = getStatsByRole();
 
   return (
     <Container>

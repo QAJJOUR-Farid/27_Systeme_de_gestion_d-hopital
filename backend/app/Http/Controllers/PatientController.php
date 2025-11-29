@@ -17,10 +17,28 @@ class PatientController extends Controller
     /**
      * Display a listing of the resource.
      */
+//    public function index()
+// {
+//     $patients = Patient::all();
+
+//     return response()->json([
+//         'status' => 'success',
+//         'data' => $patients
+//     ], 200);
+// }
+
     public function index()
-    {
-        //
+{
+    try {
+        // Charger les patients AVEC la relation user
+        $patients = Patient::with('user')->get();
+        
+        return response()->json($patients, 200);
+        
+    } catch (Exception $e) {
+        return response()->json(['error' => 'Erreur lors de la récupération des patients'], 500);
     }
+}
 
     /**
      * Show the form for creating a new resource.

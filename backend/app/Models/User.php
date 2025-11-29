@@ -22,6 +22,7 @@ class User extends Authenticatable
     'date_naissance',
     'etat',
     'email',
+    'role',
     'password',
     'adresse',
     'num_tel'
@@ -63,6 +64,18 @@ class User extends Authenticatable
     public function admin(){
         return $this->hasOne(Admin::class,'CIN','CIN');
     }
+
+     /**
+     * Rôles disponibles
+     */
+    public const ROLES = [
+        'admin' => 'Administrateur',
+        'medecin' => 'Médecin',
+        'infirmier' => 'Infirmier',
+        'receptionniste' => 'Réceptionniste',
+        'magasinier' => 'Magasinier',
+        'patient' => 'Patient',
+    ];
 
     /*
        ! modifer infos all users

@@ -14,7 +14,7 @@ const Register = () => {
     confirmPassword: '',
     adresse: '',
     num_tel: '',
-    role: 'patient', // ← Rôle par défaut
+    role: '', // ← Rôle par défaut
     // Champs spécifiques aux rôles
     service: '', // Infirmier
     annee_travail: '', // Médecin

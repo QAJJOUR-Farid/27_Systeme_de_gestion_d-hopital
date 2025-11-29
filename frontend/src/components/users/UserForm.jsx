@@ -26,6 +26,7 @@ export default function UserForm({ user, onSuccess }) {
         prenom: user.prenom || "",
         date_naissance: user.date_naissance || "",
         email: user.email || "",
+        role: user.role || "",
         password: "", // on ne pré-remplit jamais le mot de passe
         gender: user.gender || "M",
         adresse: user.adresse || "",
