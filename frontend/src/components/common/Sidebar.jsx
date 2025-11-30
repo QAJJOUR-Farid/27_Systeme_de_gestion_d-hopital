@@ -25,9 +25,14 @@ const Sidebar = () => {
       case 'medecin':
         return [
           ...baseItems,
+<<<<<<< HEAD
           { path: '/rendezvous', icon: 'fas fa-calendar-check', label: 'Mes Rendez-vous' },
           { path: '/diagnosticsMedecin', icon: 'fas fa-stethoscope', label: 'Diagnostics' },
           { path: '/diagnostics&Patient', icon: 'fas fa-stethoscope', label: 'Patients' }
+=======
+          { path: '/rendezvous-medecin', icon: 'fas fa-calendar-check', label: 'Mes Rendez-vous' },
+          { path: '/diagnostics', icon: 'fas fa-stethoscope', label: 'Diagnostics' }
+>>>>>>> 93b1c8aa5b304f4ed775d2ebe79e32d24e2f8a2b
         ];
       
       case 'infirmier':
@@ -41,8 +46,12 @@ const Sidebar = () => {
       case 'receptionniste':
         return [
           ...baseItems,
+<<<<<<< HEAD
           { path: '/rendezvous', icon: 'fas fa-calendar-check', label: 'Rendez-vous' },
           { path: '/diagnostics&Patient', icon: 'fas fa-stethoscope', label: 'Patients' }
+=======
+          { path: '/rendezvous-rec', icon: 'fas fa-calendar-check', label: 'Rendez-vous' }
+>>>>>>> 93b1c8aa5b304f4ed775d2ebe79e32d24e2f8a2b
         ];
       
       case 'magasinier':
@@ -56,9 +65,14 @@ const Sidebar = () => {
       case 'patient':
         return [
           ...baseItems,
+<<<<<<< HEAD
           { path: '/rendezvous', icon: 'fas fa-calendar-check', label: 'Mes Rendez-vous' },
           { path: '/voirMedecins', icon: 'fas fa-prescription', label: 'Médecins' },
           { path: '/mesDiagnostics', icon: 'fas fa-prescription', label: 'Mes Diagnostics' }
+=======
+          { path: '/rendezvous-patient', icon: 'fas fa-calendar-check', label: 'Mes Rendez-vous' },
+          { path: '/voirMedecins', icon: 'fas fa-prescription', label: 'Médecins' }
+>>>>>>> 93b1c8aa5b304f4ed775d2ebe79e32d24e2f8a2b
         ];
       
       default:

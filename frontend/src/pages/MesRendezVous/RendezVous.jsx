@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Table, Button, Alert, Spinner, Badge, Modal, Form, Row, Col, Card } from 'react-bootstrap';
-import { rendezVousAPI } from '../Services/api';
+import { rendezVousAPI } from '../../Services/api';
 
 const RendezVous = () => {
   const [rendezVous, setRendezVous] = useState([]);

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Table, Button, Alert, Spinner, Badge, Modal, Form, Row, Col, Card } from 'react-bootstrap';
-import { rendezVousAPI, userAPI } from '../../Services/api';
+import { rendezVousAPI, userAPI, patientsAPI } from '../../Services/api';
 
 const RendezVousReceptionniste = () => {
   const [rendezVous, setRendezVous] = useState([]);
@@ -35,14 +35,15 @@ const RendezVousReceptionniste = () => {
 
   useEffect(() => {
     applyFilters();
-  }, [rendezVous, filters]);
+  }, [rendezVous, filters, patients, medecins]);
 
   const loadInitialData = async () => {
     try {
       setLoadingData(true);
       await Promise.all([
         loadRendezVous(),
-        loadUsersData() // Charger tous les utilisateurs une seule fois
+        loadMedecins(),
+        loadPatients()
       ]);
     } catch (err) {
       console.error('Erreur chargement initial:', err);
@@ -79,38 +80,59 @@ const RendezVousReceptionniste = () => {
     }
   };
 
-  // Charger tous les utilisateurs et les filtrer par type
-  const loadUsersData = async () => {
+  // Charger la liste des médecins depuis l'API
+  const loadMedecins = async () => {
     try {
-      console.log('🔄 Chargement de tous les utilisateurs...');
-      const response = await userAPI.getAllUsers();
-      console.log('📋 Réponse utilisateurs:', response);
-      console.log('📋 Données utilisateurs:', response.data);
+      console.log('🔄 Chargement des médecins...');
+      const response = await userAPI.getAllMedecins();
+      console.log('📋 Réponse médecins:', response);
+      console.log('📋 Données médecins:', response.data);
       
       // Gestion flexible de la structure de réponse
-      let usersData = [];
+      let medecinsData = [];
       if (Array.isArray(response.data)) {
-        usersData = response.data;
+        medecinsData = response.data;
       } else if (response.data && Array.isArray(response.data.data)) {
-        usersData = response.data.data;
+        medecinsData = response.data.data;
       } else if (response.data && response.data.success && Array.isArray(response.data.data)) {
-        usersData = response.data.data;
+        medecinsData = response.data.data;
       }
       
-      // Filtrer les patients (type = 'patient')
-      const patientsData = usersData.filter(user => user.type === 'patient');
-      console.log(`✅ ${patientsData.length} patients trouvés:`, patientsData);
-      setPatients(patientsData);
-      
-      // Filtrer les médecins (type = 'medecin')
-      const medecinsData = usersData.filter(user => user.type === 'medecin');
-      console.log(`✅ ${medecinsData.length} médecins trouvés:`, medecinsData);
+      console.log(`✅ ${medecinsData.length} médecins chargés:`, medecinsData);
       setMedecins(medecinsData);
-      
     } catch (err) {
-      console.error('❌ Erreur chargement utilisateurs:', err);
+      console.error('❌ Erreur chargement médecins:', err);
       console.error('Détails erreur:', err.response?.data);
-      setError('Erreur lors du chargement des utilisateurs: ' + (err.response?.data?.message || err.message));
+      setError('Erreur lors du chargement des médecins: ' + (err.response?.data?.message || err.message));
+    }
+  };
+
+  // Charger la liste des patients depuis l'API
+  const loadPatients = async () => {
+    try {
+      console.log('🔄 Chargement des patients...');
+      const response = await patientsAPI.getAllPatients(); // ✅ CORRECT - patientsAPI
+      console.log('📋 Réponse patients:', response);
+      console.log('📋 Données patients:', response.data);
+      
+      // Gestion flexible de la structure de réponse
+      let patientsData = [];
+      if (Array.isArray(response.data)) {
+        patientsData = response.data;
+      } else if (response.data && Array.isArray(response.data.data)) {
+        patientsData = response.data.data;
+      } else if (response.data && response.data.success && Array.isArray(response.data.data)) {
+        patientsData = response.data.data;
+      } else if (response.data && Array.isArray(response.data.patients)) {
+        patientsData = response.data.patients;
+      }
+      
+      console.log(`✅ ${patientsData.length} patients chargés:`, patientsData);
+      setPatients(patientsData);
+    } catch (err) {
+      console.error('❌ Erreur chargement patients:', err);
+      console.error('Détails erreur:', err.response?.data);
+      setError('Erreur lors du chargement des patients: ' + (err.response?.data?.message || err.message));
     }
   };
 
@@ -301,19 +323,17 @@ const RendezVousReceptionniste = () => {
         minute: '2-digit'
       });
     } catch (error) {
-      return 'Date invalide';
+      return 'Date invalide'+error;
     }
   };
 
   const getPatientInfo = (patientId) => {
     const patient = patients.find(p => p.id === patientId);
-    console.log(`🔍 Recherche patient ${patientId}:`, patient, 'dans:', patients);
     return patient || {};
   };
 
   const getMedecinInfo = (medecinId) => {
     const medecin = medecins.find(m => m.id === medecinId);
-    console.log(`🔍 Recherche médecin ${medecinId}:`, medecin, 'dans:', medecins);
     return medecin || {};
   };
 
@@ -323,14 +343,6 @@ const RendezVousReceptionniste = () => {
     confirmed: rendezVous.filter(rdv => rdv.statut === 'confirmé').length,
     completed: rendezVous.filter(rdv => rdv.statut === 'terminé').length
   };
-
-  // Debug: afficher l'état actuel
-  console.log('📊 État actuel:', {
-    patientsCount: patients.length,
-    medecinsCount: medecins.length,
-    patients: patients,
-    medecins: medecins
-  });
 
   if ((loading && rendezVous.length === 0) || loadingData) {
     return (

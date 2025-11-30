@@ -14,13 +14,17 @@ import Footer from "./components/common/Footer";
 import Dashboard from "./pages/Dashboard";
 import Users from "./pages/Users";
 import Patients from "./pages/Patients";
-import RendezVous from "./pages/RendezVous";
-import RendezVousInfirmier from "./pages/RendezVousInfirmier";
+import RendezVousInfirmier from "./pages/MesRendezVous/RendezVousInfirmier";
+import RendezVousMedecin from "./pages/MesRendezVous/RendezVousMedecin";
+import RendezVousReceptionniste from "./pages/MesRendezVous/RendezVousReceptionniste";
+import RendezVousPatient from "./pages/MesRendezVous/RendezVousPatient";
+import RendezVous from "./pages/MesRendezVous/RendezVous";
 import Produits from "./pages/Produits";
 import Login from "./components/auth/Login";
 import Register from "./components/auth/Register";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./styles/custom.scss";
+<<<<<<< HEAD
 import DiagnosticsInfermier from './pages/diagnostics/DiagnosticsInfermier';
 import Signale from './pages/Signales/Signale';
 import SignaleMagasinier from './pages/Signales/SignaleMagasinier';
@@ -31,6 +35,15 @@ import DiagnosticsEtPatients from "./pages/diagnostics/Diagnostics&Patient";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/custom.scss';
 
+=======
+import DiagnosticsInfermier from "./pages/diagnostics/DiagnosticsInfermier";
+import Signale from "./pages/Signales/Signale";
+import SignaleMagasinier from "./pages/Signales/SignaleMagasinier";
+import VoirMedecins from "./pages/VoirMedecins";
+import ModifierInfos from "./pages/ModifierInfos";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "./styles/custom.scss";
+>>>>>>> 93b1c8aa5b304f4ed775d2ebe79e32d24e2f8a2b
 
 // Composant de chargement
 const LoadingSpinner = () => (
@@ -81,20 +94,25 @@ const MainLayout = () => {
 
             <Route path="/" element={<Dashboard />} />
 
-            
             {/*Route Signale  */}
-            <Route path="/signale" element={
-              <ProtectedRoute allowedRoles={['infirmier']}>
-                <Signale />
-              </ProtectedRoute>
-            }/>
+            <Route
+              path="/signale"
+              element={
+                <ProtectedRoute allowedRoles={["infirmier"]}>
+                  <Signale />
+                </ProtectedRoute>
+              }
+            />
 
             {/*Route Signale pour magasinier  */}
-            <Route path="/signaleMagasinier" element={
-              <ProtectedRoute allowedRoles={['magasinier']}>
-                <SignaleMagasinier />
-              </ProtectedRoute>
-            }/>
+            <Route
+              path="/signaleMagasinier"
+              element={
+                <ProtectedRoute allowedRoles={["magasinier"]}>
+                  <SignaleMagasinier />
+                </ProtectedRoute>
+              }
+            />
             {/* Routes Admin */}
             <Route
               path="/users"
@@ -105,24 +123,45 @@ const MainLayout = () => {
               }
             />
             <Route path="/patients" element={<Patients />} />
+            <Route
+              path="/rendezvous-medecin"
+              element={
+                <ProtectedRoute allowedRoles={["medecin"]}>
+                  <RendezVousMedecin />
+                </ProtectedRoute>
+              }
+            />
 
             {/* Routes communes */}
             <Route
+              path="/rendezvous-rec"
+              element={
+                <ProtectedRoute allowedRoles={["receptionniste"]}>
+                  <RendezVousReceptionniste />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/rendezvous-patient"
+              element={
+                <ProtectedRoute allowedRoles={["patient"]}>
+                  <RendezVousPatient />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* <Route
               path="/rendezvous"
               element={
                 <ProtectedRoute
-                  allowedRoles={[
-                    "admin",
-                    "receptionniste",
-                    "medecin",
-                    "patient",
-                  ]}
+                  allowedRoles={[ "receptionniste", "patient"]}
                 >
                   <RendezVous />
                 </ProtectedRoute>
               }
-            />
+            /> */}
             {/* Route pour infirmier */}
+
             <Route
               path="/rendezvous-infirmier"
               element={
@@ -132,25 +171,34 @@ const MainLayout = () => {
               }
             />
 
-            <Route path="/voirMedecins" element={
-              <ProtectedRoute allowedRoles={['patient']}>
-                <VoirMedecins />
-              </ProtectedRoute>
-            }/>
+            <Route
+              path="/voirMedecins"
+              element={
+                <ProtectedRoute allowedRoles={["patient"]}>
+                  <VoirMedecins />
+                </ProtectedRoute>
+              }
+            />
 
-            <Route path="/modifierInfos" element={
-              <ProtectedRoute>
-                <ModifierInfos />
-              </ProtectedRoute>
-            }/>
+            <Route
+              path="/modifierInfos"
+              element={
+                <ProtectedRoute>
+                  <ModifierInfos />
+                </ProtectedRoute>
+              }
+            />
 
-            <Route path="/produits" element={
-              <ProtectedRoute allowedRoles={['admin', 'magasinier']}>
-                <Produits />
-              </ProtectedRoute>
-            } />
-            
+            <Route
+              path="/produits"
+              element={
+                <ProtectedRoute allowedRoles={["admin", "magasinier"]}>
+                  <Produits />
+                </ProtectedRoute>
+              }
+            />
 
+<<<<<<< HEAD
             <Route path="/diagnostics&Patient" element={
               <ProtectedRoute allowedRoles={['admin', 'medecin','receptionniste']}>
                 <DiagnosticsEtPatients />
@@ -174,6 +222,25 @@ const MainLayout = () => {
               </ProtectedRoute>
             } />
             
+=======
+            <Route
+              path="/diagnostics"
+              element={
+                <ProtectedRoute allowedRoles={["admin", "medecin"]}>
+                  <Diagnostics />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/diagnosticsInfermier"
+              element={
+                <ProtectedRoute allowedRoles={["infirmier"]}>
+                  <DiagnosticsInfermier />
+                </ProtectedRoute>
+              }
+            />
+>>>>>>> 93b1c8aa5b304f4ed775d2ebe79e32d24e2f8a2b
           </Routes>
         </div>
       </div>

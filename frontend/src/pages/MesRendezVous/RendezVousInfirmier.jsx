@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Table, Alert, Spinner, Badge, Card } from 'react-bootstrap';
-import { rendezVousAPI } from '../Services/api';
+import { rendezVousAPI } from '../../Services/api';
 
 const RendezVousInfirmier = () => {
   const [rendezVous, setRendezVous] = useState([]);
@@ -9,6 +9,11 @@ const RendezVousInfirmier = () => {
 
   useEffect(() => {
     loadRendezVous();
+  }, []);
+  useEffect(() => {
+    console.log("🩺 RENDEZVOUS INFIRMIER - Composant monté !");
+    console.log("📋 URL actuelle:", window.location.href);
+    console.log("🔍 Pathname:", window.location.pathname);
   }, []);
 
   const loadRendezVous = async () => {
