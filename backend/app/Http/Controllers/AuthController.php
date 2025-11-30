@@ -14,9 +14,10 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 
+
 class AuthController extends Controller
 {
-    
+
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -29,7 +30,7 @@ class AuthController extends Controller
             'password' => 'required|string|min:6',
             'adresse' => 'nullable|string',
             'num_tel' => 'nullable|string',
-            
+
         ]);
 
         if ($validator->fails()) {
@@ -52,7 +53,7 @@ class AuthController extends Controller
                     'password' => Hash::make($request->password),
                     'adresse' => $request->adresse ?? null,
                     'num_tel' => $request->num_tel ?? null,
-                    'etat' => 'inactif', // ← TOUJOURS ACTIF pour le développement
+                    'etat' => 'actif', // ← TOUJOURS ACTIF pour le développement
                 ]);
 
                 // Create specific role record
@@ -199,7 +200,7 @@ public function update(Request $request, $CIN)
 
     // Trouver l'utilisateur
     $user = User::where('CIN', $CIN)->first();
-    
+
     if (!$user) {
         return response()->json(['message' => 'Utilisateur non trouvé'], 404);
     }
@@ -249,7 +250,7 @@ public function update(Request $request, $CIN)
 
 
 
-   
+
 
 
 

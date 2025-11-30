@@ -5,6 +5,7 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
+import DiagnosticsMedecin from "./pages/diagnostics/DiagnosticsMedecin";
 import AuthProvider from "./providers/AuthProvider";
 import { useAuth } from "./hooks/useAuth";
 import Header from "./components/common/Header";
@@ -16,7 +17,6 @@ import Patients from "./pages/Patients";
 import RendezVous from "./pages/RendezVous";
 import RendezVousInfirmier from "./pages/RendezVousInfirmier";
 import Produits from "./pages/Produits";
-import Diagnostics from "./pages/diagnostics/Diagnostics";
 import Login from "./components/auth/Login";
 import Register from "./components/auth/Register";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -26,6 +26,8 @@ import Signale from './pages/Signales/Signale';
 import SignaleMagasinier from './pages/Signales/SignaleMagasinier';
 import VoirMedecins from './pages/VoirMedecins';
 import ModifierInfos from './pages/ModifierInfos';
+import DiagnosticsPatient from "./pages/diagnostics/DiagnosticsPatient";
+import DiagnosticsEtPatients from "./pages/diagnostics/Diagnostics&Patient";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/custom.scss';
 
@@ -149,9 +151,9 @@ const MainLayout = () => {
             } />
             
 
-            <Route path="/diagnostics" element={
-              <ProtectedRoute allowedRoles={['admin', 'medecin']}>
-                <Diagnostics />
+            <Route path="/diagnostics&Patient" element={
+              <ProtectedRoute allowedRoles={['admin', 'medecin','receptionniste']}>
+                <DiagnosticsEtPatients />
               </ProtectedRoute>
             } />
 
@@ -160,6 +162,18 @@ const MainLayout = () => {
                 <DiagnosticsInfermier />
               </ProtectedRoute>
             } />
+
+            <Route path="/mesDiagnostics" element={
+              <ProtectedRoute allowedRoles={['patient']}>
+                <DiagnosticsPatient />
+              </ProtectedRoute>
+            } />
+            <Route path="/diagnosticsMedecin" element={
+              <ProtectedRoute allowedRoles={['medecin']}>
+                <DiagnosticsMedecin />
+              </ProtectedRoute>
+            } />
+            
           </Routes>
         </div>
       </div>

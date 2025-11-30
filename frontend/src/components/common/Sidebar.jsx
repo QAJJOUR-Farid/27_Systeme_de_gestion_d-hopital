@@ -18,7 +18,7 @@ const Sidebar = () => {
           ...baseItems,
           { path: '/users', icon: 'fas fa-users-cog', label: 'Utilisateurs' },
           { path: '/Patients', icon: 'fas fa-user-injured', label: 'Patients' },
-          { path: '/diagnostics', icon: 'fas fa-stethoscope', label: 'Diagnostics' },
+          { path: '/diagnostics&Patient', icon: 'fas fa-stethoscope', label: 'Diagnostics' },
           { path: '/produits', icon: 'fas fa-pills', label: 'Produits' }
         ];
     
@@ -26,13 +26,13 @@ const Sidebar = () => {
         return [
           ...baseItems,
           { path: '/rendezvous', icon: 'fas fa-calendar-check', label: 'Mes Rendez-vous' },
-          { path: '/diagnostics', icon: 'fas fa-stethoscope', label: 'Diagnostics' }
+          { path: '/diagnosticsMedecin', icon: 'fas fa-stethoscope', label: 'Diagnostics' },
+          { path: '/diagnostics&Patient', icon: 'fas fa-stethoscope', label: 'Patients' }
         ];
       
       case 'infirmier':
         return [
           ...baseItems,
-          { path: '/diagnostics', icon: 'fas fa-stethoscope', label: 'Soins & Diagnostics' },
           { path: '/rendezvous-infirmier', icon: 'fas fa-calendar-check', label: 'Rendez-vous' } ,
           { path: '/diagnosticsInfermier', icon: 'fas fa-stethoscope', label: 'Soins & Diagnostics' },
           { path: '/signale', icon: 'fas fa-calendar-check', label: 'Signale' }
@@ -41,7 +41,8 @@ const Sidebar = () => {
       case 'receptionniste':
         return [
           ...baseItems,
-          { path: '/rendezvous', icon: 'fas fa-calendar-check', label: 'Rendez-vous' }
+          { path: '/rendezvous', icon: 'fas fa-calendar-check', label: 'Rendez-vous' },
+          { path: '/diagnostics&Patient', icon: 'fas fa-stethoscope', label: 'Patients' }
         ];
       
       case 'magasinier':
@@ -56,7 +57,8 @@ const Sidebar = () => {
         return [
           ...baseItems,
           { path: '/rendezvous', icon: 'fas fa-calendar-check', label: 'Mes Rendez-vous' },
-          { path: '/voirMedecins', icon: 'fas fa-prescription', label: 'Médecins' }
+          { path: '/voirMedecins', icon: 'fas fa-prescription', label: 'Médecins' },
+          { path: '/mesDiagnostics', icon: 'fas fa-prescription', label: 'Mes Diagnostics' }
         ];
       
       default:

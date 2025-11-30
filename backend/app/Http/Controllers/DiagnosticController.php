@@ -95,10 +95,11 @@ class DiagnosticController extends Controller
         $data = $request->validate([
             'description' => 'nullable|string',
             'resultats' => 'nullable|string',
-            'dateD' => 'required|date',
-            'id_patient' => 'required|exists:patients,id_patient',
+            'dateD' => 'nullable|date',
+            'id_patient' => 'nullable|exists:patients,id_patient',
             'id_medecin' => 'nullable|exists:medecins,id_medecin',
-            'id_infirmier' => 'nullable|exists:infirmiers,id_infirmier'
+            'id_infirmier' => 'nullable|exists:infirmiers,id_infirmier',
+            'etat' => 'nullable|string'
         ]);
 
         try {
