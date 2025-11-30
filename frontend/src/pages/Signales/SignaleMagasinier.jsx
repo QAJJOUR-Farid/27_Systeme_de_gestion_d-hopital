@@ -108,10 +108,10 @@ const SignaleMagasinier = () => {
       console.log('📤 Données envoyées à l\'API:', apiData);
 
       const response = await signaleAPI.updateSignale(signaleId, apiData);
-      console.log('✅ Réponse API:', response.data);
+      console.log(' Réponse API:', response.data);
 
       if (response.status >= 200 && response.status < 300) {
-        console.log('🎉 Statut mis à jour avec succès');
+        console.log(' Statut mis à jour avec succès');
         
         setSignalements(prev => 
           prev.map(s => 
@@ -121,19 +121,19 @@ const SignaleMagasinier = () => {
           )
         );
         
-        alert(`✅ Signalement marqué comme "${newStatut === 'resolu' ? 'résolu' : 'non résolu'}" !`);
+        alert(` Signalement marqué comme "${newStatut === 'resolu' ? 'résolu' : 'non résolu'}" !`);
         handleCloseDetailModal();
       } else {
         throw new Error(`Statut HTTP ${response.status}`);
       }
       
     } catch (err) {
-      console.error('❌ Erreur détaillée:', err);
+      console.error(' Erreur détaillée:', err);
       
       let errorMessage = 'Erreur lors de la mise à jour du statut';
       
       if (err.response) {
-        console.log('📊 Réponse erreur:', err.response.data);
+        console.log(' Réponse erreur:', err.response.data);
         
         errorMessage = err.response.data?.message || 
                       err.response.data?.error ||
@@ -278,7 +278,7 @@ const SignaleMagasinier = () => {
         <div>
           <small className="text-muted">
             Connecté en tant que: <strong>{getFullName(user)}</strong>
-            {currentMagasinierId && ` (ID: ${currentMagasinierId})`}
+            
           </small>
         </div>
       </div>
@@ -302,7 +302,7 @@ const SignaleMagasinier = () => {
         <Alert variant="info" className="mb-3">
           <small>
             <i className="fas fa-filter me-2"></i>
-            Affichage des signalements assignés à vous (Magasinier ID: {currentMagasinierId})
+            Affichage des signalements assignés à vous 
           </small>
         </Alert>
       )}

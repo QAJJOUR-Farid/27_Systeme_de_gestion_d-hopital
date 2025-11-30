@@ -22,19 +22,7 @@ api.interceptors.request.use(
     return Promise.reject(error);
   }
 );
-// Interceptor pour ajouter le token d'authentification
-api.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('authToken');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
+
 
 
 
